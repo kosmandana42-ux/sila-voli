@@ -1,0 +1,2327 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сила Воли</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;600&family=IBM+Plex+Sans:wght@300;400;600&family=Raleway:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f5fb;
+    --surface: #ffffff;
+    --surface2: #e8f0f9;
+    --border: #d0e0f0;
+    --accent: #4a7fb5;
+    --accent2: #e05555;
+    --accent3: #5aaecc;
+    --text: #2c3e50;
+    --muted: #8da4be;
+    --card: #f7fafd;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { background: #f0f5fb; }
+
+  body {
+    background: #f0f5fb;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(91,155,213,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(91,155,213,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(240,245,251,0.98);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 12px rgba(74,127,181,0.08);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    height: 68px;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    margin-right: auto;
+  }
+
+  .nav-tabs {
+    display: flex;
+    gap: 2px;
+  }
+
+  .nav-tab {
+    padding: 8px 20px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .nav-tab::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.2s;
+  }
+
+  .nav-tab.active {
+    color: var(--accent);
+  }
+
+  .nav-tab.active::after { transform: scaleX(1); }
+  .nav-tab:hover { color: var(--text); }
+
+  /* PAGES */
+  .page { display: none; position: relative; z-index: 1; }
+  .page.active { display: block; }
+
+  /* ===== TIMER PAGE ===== */
+  .timer-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  .addiction-selector {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+
+  .addiction-btn {
+    padding: 12px 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    box-shadow: 0 1px 6px rgba(74,127,181,0.06);
+  }
+
+  .addiction-btn .icon { font-size: 22px; display: block; margin-bottom: 6px; }
+
+  .addiction-btn:hover {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .addiction-btn.active {
+    border-color: var(--accent);
+    background: rgba(91,155,213,0.08);
+    color: var(--accent);
+  }
+
+  /* TIMER DISPLAY */
+  .timer-display {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 48px 40px;
+    box-shadow: 0 2px 16px rgba(74,127,181,0.08);
+    text-align: center;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .timer-display::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(74,127,181,0.3), transparent);
+    animation: scan 3s linear infinite;
+  }
+
+  @keyframes scan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .timer-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .timer-name {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    color: var(--accent);
+    margin-bottom: 24px;
+    min-height: 30px;
+    text-transform: uppercase;
+  }
+
+
+  .timer-big-units {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 6px;
+    min-height: 24px;
+  }
+  .timer-digits {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(56px, 10vw, 100px);
+    letter-spacing: 6px;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 8px;
+    transition: color 0.3s;
+  }
+
+  .timer-digits.running { color: var(--accent); }
+
+  .timer-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  /* START SECTION */
+  .start-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    box-shadow: 0 2px 12px rgba(74,127,181,0.06);
+  }
+
+  .input-group {
+    flex: 1;
+  }
+
+  .input-group label {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .input-group input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .input-group input:focus { border-color: var(--accent); }
+
+  .btn {
+    padding: 11px 28px;
+    border: none;
+    border-radius: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(74,127,181,0.3);
+  }
+  .btn-primary:hover { background: #4a86c0; transform: translateY(-1px); }
+
+  .btn-danger {
+    background: rgba(224,85,85,0.06);
+    border: 1px solid var(--accent2);
+    color: var(--accent2);
+  }
+  .btn-danger:hover { background: rgba(255,68,68,0.1); }
+
+  /* ACTIONS */
+  .timer-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  /* RECORDS */
+  .records-section h3 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 12px rgba(74,127,181,0.08);
+  }
+
+  .records-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .record-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    box-shadow: 0 1px 6px rgba(74,127,181,0.06);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .record-item:hover { border-color: rgba(91,155,213,0.3); }
+
+  .record-icon { font-size: 20px; }
+
+  .record-info { flex: 1; }
+
+  .record-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+
+  .record-duration {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--accent3);
+  }
+
+  .record-date {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .record-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 2px;
+    background: rgba(91,155,213,0.15);
+    border: 1px solid rgba(91,155,213,0.3);
+    color: #3a7bbf;
+  }
+
+  .empty-records {
+    text-align: center;
+    padding: 32px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+
+  /* ===== ARTICLES PAGE ===== */
+  .articles-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  .articles-filter {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 7px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-btn:hover { color: var(--text); border-color: var(--text); }
+
+  .filter-btn.active {
+    background: rgba(91,155,213,0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .articles-grid {
+    display: grid;
+    gap: 16px;
+  }
+
+  .article-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .article-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.25s;
+  }
+
+  .article-card:hover { border-color: rgba(91,155,213,0.3); transform: translateY(-2px); }
+  .article-card:hover::before { transform: scaleY(1); }
+  .article-card.expanded { border-color: rgba(91,155,213,0.4); }
+  .article-card.expanded::before { transform: scaleY(1); }
+
+  .article-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+
+  .article-icon { font-size: 28px; flex-shrink: 0; }
+
+  .article-meta { flex: 1; }
+
+  .article-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .article-title {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .article-preview {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .article-body {
+    display: none;
+    color: #bbb;
+    font-size: 14px;
+    line-height: 1.8;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .article-body.visible { display: block; }
+
+  .article-body h4 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 20px 0 10px;
+  }
+
+  .article-body p { margin-bottom: 12px; }
+
+  .article-body ul {
+    padding-left: 20px;
+    margin-bottom: 12px;
+  }
+
+  .article-body li { margin-bottom: 6px; }
+
+  .read-more {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--accent);
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: gap 0.2s;
+  }
+
+  .read-more:hover { gap: 10px; }
+
+  /* RELAPSE MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(30,60,100,0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.visible { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--accent2);
+    border-radius: 16px;
+    padding: 32px 28px 28px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .modal-icon { font-size: 48px; margin-bottom: 20px; }
+
+  .modal h2 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .modal p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .modal-record {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+
+  .modal-record-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .modal-record-value {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 36px;
+    color: var(--accent3);
+  }
+
+  .modal-buttons { display: flex; gap: 10px; justify-content: stretch; margin-top: 4px; }
+  .modal-buttons .btn { flex: 1; text-align: center; padding: 13px 8px; font-size: 12px; letter-spacing: 1px; }
+
+  .btn-cancel {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-cancel:hover { border-color: var(--text); color: var(--text); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 12px 20px;
+    border-radius: 4px;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 2000;
+  }
+
+  .toast.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+
+
+  /* QUOTE */
+  .quote-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 12px rgba(74,127,181,0.06);
+    position: relative;
+  }
+
+  .quote-text {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .quote-author {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .quote-refresh {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.4s;
+    padding: 4px;
+  }
+
+  .quote-refresh:hover { transform: rotate(180deg); color: var(--accent); }
+  /* SAVINGS */
+  .savings-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .savings-section h3 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 12px rgba(74,127,181,0.08);
+  }
+
+  .savings-input-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    margin-bottom: 16px;
+  }
+
+  .savings-display {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .savings-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .savings-card-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .savings-card-value {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 28px;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+
+  .savings-card-value.money { color: #82C4A0; }
+
+  /* BADGES */
+  .badges-section {
+    margin-bottom: 32px;
+  }
+
+  .badges-section h3 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 12px rgba(74,127,181,0.08);
+  }
+
+  .badges-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .badge-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 8px;
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .badge-item.unlocked {
+    border-color: var(--accent);
+    background: rgba(91,155,213,0.06);
+  }
+
+  .badge-item.unlocked::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(91,155,213,0.08), transparent 70%);
+  }
+
+  .badge-item.locked {
+    opacity: 0.4;
+    filter: grayscale(1);
+  }
+
+  .badge-emoji {
+    font-size: 26px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .badge-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+
+  .badge-item.unlocked .badge-name { color: var(--accent); }
+
+  .badge-req {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: var(--muted);
+  }
+
+  .badge-new {
+    position: absolute;
+    top: 6px; right: 6px;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 7px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+  }
+
+  @keyframes badgeUnlock {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+  }
+
+  .badge-item.just-unlocked { animation: badgeUnlock 0.5s ease; }
+
+  @media (max-width: 600px) {
+    .badges-grid { grid-template-columns: repeat(3, 1fr); }
+    .savings-input-row { flex-direction: column; }
+    .savings-display { grid-template-columns: 1fr 1fr; }
+  }
+
+
+  /* ONBOARDING */
+  .onboarding-overlay {
+    position: fixed;
+    inset: 0;
+    background: #f0f5fb;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    transition: opacity 0.5s ease;
+  }
+
+  .onboarding-overlay.hiding {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .onboarding-step { display: none; width: 100%; max-width: 400px; text-align: center; }
+  .onboarding-step.active { display: flex; flex-direction: column; align-items: center; }
+
+  .onboarding-logo {
+    margin-bottom: 32px;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .onboarding-step h1 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 14px;
+    line-height: 1.3;
+  }
+
+  .onboarding-step p {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+
+  .onboarding-dots {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  .onboarding-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all 0.3s;
+  }
+
+  .onboarding-dot.active {
+    background: var(--accent);
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  .onboarding-addiction-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 24px;
+  }
+
+  .onboarding-addiction-btn {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .onboarding-addiction-btn .ob-icon { font-size: 28px; display: block; margin-bottom: 8px; }
+  .onboarding-addiction-btn:hover { border-color: var(--accent); }
+  .onboarding-addiction-btn.selected {
+    border-color: var(--accent);
+    background: rgba(74,127,181,0.08);
+    color: var(--accent);
+  }
+
+  .onboarding-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    text-align: left;
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+
+  .onboarding-feature-icon { font-size: 24px; flex-shrink: 0; }
+  .onboarding-feature-text h4 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .onboarding-feature-text p {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .ob-skip {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 8px;
+    margin-top: 8px;
+  }
+
+  .ob-skip:hover { color: var(--text); }
+  /* TESTS PAGE */
+  .tests-page { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+  .test-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .test-select-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(74,127,181,0.06);
+  }
+
+  .test-select-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .test-select-btn .icon { font-size: 28px; display: block; margin-bottom: 8px; }
+  .test-select-btn .name { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text); }
+  .test-select-btn .desc { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .test-container { display: none; }
+  .test-container.active { display: block; }
+
+  .test-header {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(74,127,181,0.06);
+  }
+
+  .test-header h2 { font-family: 'IBM Plex Sans', sans-serif; font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .test-header p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  .test-progress-bar {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    margin: 16px 0 0;
+    overflow: hidden;
+  }
+
+  .test-progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .test-question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(74,127,181,0.06);
+  }
+
+  .test-question-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .test-question-text {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  .test-options { display: flex; flex-direction: column; gap: 8px; }
+
+  .test-option {
+    padding: 12px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    text-align: left;
+    transition: all 0.2s;
+  }
+
+  .test-option:hover { border-color: var(--accent); background: rgba(74,127,181,0.06); }
+  .test-option.selected { border-color: var(--accent); background: rgba(74,127,181,0.12); color: var(--accent); font-weight: 500; }
+
+  .test-nav { display: flex; gap: 12px; margin-top: 20px; }
+
+  .test-result {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(74,127,181,0.08);
+    display: none;
+  }
+
+  .test-result.visible { display: block; }
+  .result-emoji { font-size: 52px; margin-bottom: 16px; }
+  .result-level { font-family: 'IBM Plex Sans', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .result-level.low { color: #4caf7d; }
+  .result-level.medium { color: #e8a838; }
+  .result-level.high { color: #e05555; }
+  .result-score { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .result-desc { font-size: 14px; color: var(--text); line-height: 1.7; margin-bottom: 24px; text-align: left; }
+  .result-tips h4 { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .result-tips ul { text-align: left; padding-left: 20px; }
+  .result-tips li { font-size: 13px; color: var(--muted); margin-bottom: 6px; line-height: 1.5; }
+
+  @media (max-width: 600px) { .test-selector { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) {
+    .addiction-selector { grid-template-columns: repeat(3, 1fr); }
+  
+  .timer-big-units {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 6px;
+    min-height: 24px;
+  }
+  .timer-digits { font-size: 48px; }
+    .start-section { flex-direction: column; }
+    .timer-actions { flex-direction: column; }
+    .nav-tab { padding: 8px 12px; font-size: 10px; }
+  }
+</style>
+</head>
+<body style="background:#f0f5fb !important">
+
+
+<!-- ONBOARDING -->
+<div class="onboarding-overlay" id="onboardingOverlay">
+
+  <!-- Step 1: Welcome -->
+  <div class="onboarding-step active" id="obStep1">
+    <div class="onboarding-logo">
+      <svg width="80" height="44" viewBox="0 0 80 44" fill="none">
+        <path d="M2,42 L16,20 L24,28 L38,5 L52,28 L60,20 L78,42 Z" fill="#2c3e50"/>
+      </svg>
+      <div style="font-family:Raleway,sans-serif;font-size:16px;font-weight:200;letter-spacing:7px;color:#2c3e50;text-transform:uppercase;margin-top:6px">СИЛА ВОЛИ</div>
+    </div>
+    <h1>Ты сделал важный шаг</h1>
+    <p>Это приложение поможет тебе отслеживать время без зависимости, видеть свой прогресс и получать поддержку каждый день.</p>
+    <div class="onboarding-dots">
+      <div class="onboarding-dot active" id="dot1"></div>
+      <div class="onboarding-dot" id="dot2"></div>
+      <div class="onboarding-dot" id="dot3"></div>
+    </div>
+    <button class="btn btn-primary" onclick="obNext(2)" style="width:100%;padding:16px">Начать →</button>
+    <button class="ob-skip" onclick="finishOnboarding()">Пропустить</button>
+  </div>
+
+  <!-- Step 2: Choose addiction -->
+  <div class="onboarding-step" id="obStep2">
+    <h1>С чем ты борешься?</h1>
+    <p>Выбери тип зависимости. Ты сможешь добавить остальные позже.</p>
+    <div class="onboarding-dots">
+      <div class="onboarding-dot" id="dot1b"></div>
+      <div class="onboarding-dot active" id="dot2b"></div>
+      <div class="onboarding-dot" id="dot3b"></div>
+    </div>
+    <div class="onboarding-addiction-grid">
+      <div class="onboarding-addiction-btn" onclick="obSelectAddiction(this,'alcohol','🍺','Алкоголь')">
+        <span class="ob-icon">🍺</span>Алкоголь
+      </div>
+      <div class="onboarding-addiction-btn" onclick="obSelectAddiction(this,'drugs','💊','Наркотики')">
+        <span class="ob-icon">💊</span>Наркотики
+      </div>
+      <div class="onboarding-addiction-btn" onclick="obSelectAddiction(this,'nicotine','🚬','Никотин')">
+        <span class="ob-icon">🚬</span>Никотин
+      </div>
+      <div class="onboarding-addiction-btn" onclick="obSelectAddiction(this,'gambling','🎰','Лудомания')">
+        <span class="ob-icon">🎰</span>Лудомания
+      </div>
+    </div>
+    <button class="btn btn-primary" id="obStep2Btn" onclick="obNext(3)" style="width:100%;padding:16px;opacity:0.4;cursor:not-allowed" disabled>Далее →</button>
+    <button class="ob-skip" onclick="finishOnboarding()">Пропустить</button>
+  </div>
+
+  <!-- Step 3: Features -->
+  <div class="onboarding-step" id="obStep3">
+    <h1>Что тебя ждёт</h1>
+    <p style="margin-bottom:20px">Всё необходимое для твоего пути к свободе.</p>
+    <div class="onboarding-dots" style="margin-bottom:20px">
+      <div class="onboarding-dot" id="dot1c"></div>
+      <div class="onboarding-dot" id="dot2c"></div>
+      <div class="onboarding-dot active" id="dot3c"></div>
+    </div>
+    <div class="onboarding-feature">
+      <div class="onboarding-feature-icon">⏱</div>
+      <div class="onboarding-feature-text"><h4>Таймер трезвости</h4><p>Показывает каждую секунду твоей победы</p></div>
+    </div>
+    <div class="onboarding-feature">
+      <div class="onboarding-feature-icon">🏆</div>
+      <div class="onboarding-feature-text"><h4>Достижения</h4><p>Бейджи за 1 час, 1 день, неделю, месяц и дальше</p></div>
+    </div>
+    <div class="onboarding-feature">
+      <div class="onboarding-feature-icon">💰</div>
+      <div class="onboarding-feature-text"><h4>Счётчик экономии</h4><p>Видишь сколько денег ты уже сэкономил</p></div>
+    </div>
+    <div class="onboarding-feature">
+      <div class="onboarding-feature-icon">🧪</div>
+      <div class="onboarding-feature-text"><h4>Тесты на зависимость</h4><p>Научные тесты и рекомендации специалистов</p></div>
+    </div>
+    <button class="btn btn-primary" onclick="finishOnboarding()" style="width:100%;padding:16px;margin-top:16px">Начать мой путь 🚀</button>
+  </div>
+
+</div>
+
+<nav>
+  <div class="logo" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 0">
+  <svg width="80" height="44" viewBox="0 0 80 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2,42 L16,20 L24,28 L38,5 L52,28 L60,20 L78,42 Z" fill="#2c3e50"/>
+  </svg>
+  <span style="font-family:Raleway,sans-serif;font-size:13px;font-weight:200;letter-spacing:7px;color:#2c3e50;line-height:1;text-transform:uppercase">СИЛА ВОЛИ</span>
+</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('timer')">Таймер</button>
+    <button class="nav-tab" onclick="showPage('articles')">Статьи</button>
+    <button class="nav-tab" onclick="showPage('tests')">Тесты</button>
+  </div>
+</nav>
+
+<!-- TIMER PAGE -->
+<div class="page active" id="page-timer">
+  <div class="timer-page">
+
+    <div class="addiction-selector">
+      <button class="addiction-btn active" onclick="selectAddiction(this,'alcohol','🍺','Алкоголь')">
+        <span class="icon">🍺</span>Алкоголь
+      </button>
+      <button class="addiction-btn" onclick="selectAddiction(this,'drugs','💊','Наркотики')">
+        <span class="icon">💊</span>Наркотики
+      </button>
+      <button class="addiction-btn" onclick="selectAddiction(this,'nicotine','🚬','Никотин')">
+        <span class="icon">🚬</span>Никотин
+      </button>
+      <button class="addiction-btn" onclick="selectAddiction(this,'gambling','🎰','Лудомания')">
+        <span class="icon">🎰</span>Лудомания
+      </button>
+      <button class="addiction-btn" onclick="selectAddiction(this,'other','🔒','Другое')">
+        <span class="icon">🔒</span>Другое
+      </button>
+    </div>
+
+    <div class="timer-display">
+      <div class="timer-label">Время в завязке</div>
+      <div class="timer-name" id="timerName">Алкоголь</div>
+      <div class="timer-big-units" id="timerBigUnits"></div>
+      <div class="timer-digits" id="timerDigits">00:00:00</div>
+      <div class="timer-sub" id="timerSub">— не запущен —</div>
+    </div>
+
+    <div class="start-section" style="align-items:center;text-align:center">
+      <div class="input-group" style="width:100%">
+        <label style="display:block;text-align:center">Дата и время начала (необязательно)</label>
+        <input type="datetime-local" id="startDateTime" style="width:100%;max-width:280px;display:block;margin:0 auto">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;width:100%">
+        <button class="btn btn-primary" onclick="startNow()" style="width:100%">С этого момента</button>
+        <button class="btn" style="background:transparent;border:1px solid var(--border);color:var(--muted);font-size:11px;width:100%" onclick="startTimer()">С указанной даты</button>
+      </div>
+    </div>
+
+    <div class="timer-actions">
+      <button class="btn btn-danger" onclick="showRelapseModal()">⚠ Сорвался</button>
+      <button class="btn" id="resetBtn" onclick="resetTimer()" style="background:transparent;border:1px solid var(--border);color:var(--muted);font-size:11px;display:none">✕ Сбросить</button>
+    </div>
+
+    <!-- QUOTE -->
+    <div class="quote-block" id="quoteBlock">
+      <button class="quote-refresh" onclick="showNewQuote()" title="Новая цитата">↻</button>
+      <div class="quote-text" id="quoteText"></div>
+      <div class="quote-author" id="quoteAuthor"></div>
+    </div>
+
+    <!-- SAVINGS -->
+    <div class="savings-section">
+      <h3>💰 Экономия</h3>
+      <div class="savings-input-row" id="savingsInputRow">
+        <div class="input-group" style="flex:1">
+          <label>Трачу в день (руб.)</label>
+          <input type="number" id="dailyCost" placeholder="500" min="0" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:10px 14px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:14px;outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <button class="btn btn-primary" onclick="confirmDailyCost()" style="flex-shrink:0">✓</button>
+      </div>
+      <div id="savingsLocked" style="display:none;margin-bottom:12px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;display:none;align-items:center;justify-content:space-between">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted)">Трачу в день: <span id="lockedCostLabel" style="color:var(--accent)">0 ₽</span></span>
+        <button onclick="unlockDailyCost()" style="background:none;border:none;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;text-transform:uppercase">Изменить</button>
+      </div>
+      <div class="savings-display" id="savingsDisplay" style="display:none">
+        <div class="savings-card">
+          <div class="savings-card-label">Сэкономлено</div>
+          <div class="savings-card-value money" id="savedAmount">0 ₽</div>
+        </div>
+        <div class="savings-card">
+          <div class="savings-card-label">За год выйдет</div>
+          <div class="savings-card-value money" id="yearAmount">0 ₽</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BADGES -->
+    <div class="badges-section">
+      <h3>🏆 Достижения</h3>
+      <div class="badges-grid" id="badgesGrid"></div>
+    </div>
+
+    <div class="records-section">
+      <h3>Предыдущие рекорды</h3>
+      <div class="records-list" id="recordsList">
+        <div class="empty-records">Рекордов пока нет — начни прямо сейчас</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ARTICLES PAGE -->
+<div class="page" id="page-articles">
+  <div class="articles-page">
+
+    <div class="articles-filter">
+      <button class="filter-btn active" onclick="filterArticles(this,'all')">Все</button>
+      <button class="filter-btn" onclick="filterArticles(this,'alcohol')">🍺 Алкоголь</button>
+      <button class="filter-btn" onclick="filterArticles(this,'drugs')">💊 Наркотики</button>
+      <button class="filter-btn" onclick="filterArticles(this,'nicotine')">🚬 Никотин</button>
+      <button class="filter-btn" onclick="filterArticles(this,'gambling')">🎰 Лудомания</button>
+    </div>
+
+    <div class="articles-grid" id="articlesGrid"></div>
+
+  </div>
+</div>
+
+<!-- RESET MODAL -->
+<div class="modal-overlay" id="resetModal">
+  <div class="modal">
+    <div class="modal-icon">⚠️</div>
+    <h2>Сбросить таймер?</h2>
+    <p>Текущий отсчёт будет удалён без сохранения в рекорды.</p>
+    <div class="modal-buttons">
+      <button class="btn btn-cancel" onclick="closeResetModal()">Отмена</button>
+      <button class="btn btn-danger" onclick="confirmReset()">Сбросить</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- TESTS PAGE -->
+<div class="page" id="page-tests">
+  <div class="tests-page">
+
+    <div id="testSelector">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;text-align:center">Выберите тест</div>
+      <div class="test-selector">
+        <div class="test-select-btn" onclick="startTest('alcohol')">
+          <span class="icon">🍺</span>
+          <div class="name">Алкоголь</div>
+          <div class="desc">Тест AUDIT (10 вопросов)</div>
+        </div>
+        <div class="test-select-btn" onclick="startTest('nicotine')">
+          <span class="icon">🚬</span>
+          <div class="name">Никотин</div>
+          <div class="desc">Тест Фагерстрёма (6 вопросов)</div>
+        </div>
+        <div class="test-select-btn" onclick="startTest('gambling')">
+          <span class="icon">🎰</span>
+          <div class="name">Лудомания</div>
+          <div class="desc">Тест SOGS (10 вопросов)</div>
+        </div>
+        <div class="test-select-btn" onclick="startTest('drugs')">
+          <span class="icon">💊</span>
+          <div class="name">Наркотики</div>
+          <div class="desc">Тест DAST (10 вопросов)</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="testArea" style="display:none">
+      <button onclick="backToSelector()" style="background:none;border:none;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;margin-bottom:20px;padding:0">← Назад</button>
+      <div class="test-header">
+        <h2 id="testTitle"></h2>
+        <p id="testDesc"></p>
+        <div class="test-progress-bar"><div class="test-progress-fill" id="testProgress" style="width:0%"></div></div>
+      </div>
+      <div id="testQuestions"></div>
+      <div class="test-nav">
+        <button class="btn" id="testPrevBtn" onclick="testPrev()" style="background:transparent;border:1px solid var(--border);color:var(--muted);display:none">← Назад</button>
+        <button class="btn btn-primary" id="testNextBtn" onclick="testNext()" style="flex:1">Далее →</button>
+      </div>
+      <div class="test-result" id="testResult">
+        <div class="result-emoji" id="resultEmoji"></div>
+        <div class="result-level" id="resultLevel"></div>
+        <div class="result-score" id="resultScore"></div>
+        <div class="result-desc" id="resultDesc"></div>
+        <div class="result-tips" id="resultTips"></div>
+        <button class="btn btn-primary" onclick="backToSelector()" style="margin-top:8px">Пройти другой тест</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- RELAPSE MODAL -->
+<div class="modal-overlay" id="relapseModal">
+  <div class="modal">
+    <div class="modal-icon">💔</div>
+    <h2>Срыв?</h2>
+    <p>Это не конец — это часть пути. Каждая попытка делает тебя сильнее. Твой рекорд будет сохранён.</p>
+    <div class="modal-record">
+      <div class="modal-record-label">Твой рекорд сейчас</div>
+      <div class="modal-record-value" id="modalRecord">00:00:00</div>
+    </div>
+    <div style="margin-bottom:20px;text-align:left">
+      <label style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:8px">Что случилось? (необязательно)</label>
+      <textarea id="relapseReason" placeholder="Стресс, компания, скука..." rows="2" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;outline:none;resize:none;transition:border-color 0.2s" onfocus="this.style.borderColor='var(--accent2)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+    </div>
+    <div class="modal-buttons">
+      <button class="btn btn-cancel" onclick="closeRelapseModal()">Держусь</button>
+      <button class="btn btn-danger" onclick="confirmRelapse()">Подтвердить</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== STATE =====
+let currentAddiction = { key: 'alcohol', icon: '🍺', name: 'Алкоголь' };
+const timerIntervals = {}; // per-addiction intervals
+
+function clearAllIntervals() {
+  Object.keys(timerIntervals).forEach(k => {
+    clearInterval(timerIntervals[k]);
+    delete timerIntervals[k];
+  });
+}
+
+const STORAGE_KEY = 'zavyazka_v1';
+
+function loadData() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { timers: {}, records: [] };
+  } catch { return { timers: {}, records: [] }; }
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+// ===== NAV =====
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'articles') renderArticles();
+}
+
+// ===== ADDICTION SELECT =====
+function selectAddiction(btn, key, icon, name) {
+  document.querySelectorAll('.addiction-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentAddiction = { key, icon, name };
+  updateTimerDisplay();
+}
+
+// ===== TIMER =====
+function startNow() {
+  const data = loadData();
+  data.timers[currentAddiction.key] = Date.now();
+  saveData(data);
+  updateTimerDisplay();
+  showToast('Таймер запущен!');
+}
+
+function startTimer() {
+  const dt = document.getElementById('startDateTime').value;
+  if (!dt) { showToast('Укажи дату начала'); return; }
+  if (new Date(dt).getTime() > Date.now()) { showToast('Дата не может быть в будущем'); return; }
+
+  const data = loadData();
+  data.timers[currentAddiction.key] = new Date(dt).getTime();
+  saveData(data);
+  updateTimerDisplay();
+  showToast('Таймер запущен!');
+}
+
+function updateTimerDisplay() {
+  const data = loadData();
+  const startTs = data.timers[currentAddiction.key];
+  const nameEl = document.getElementById('timerName');
+  const digitsEl = document.getElementById('timerDigits');
+  const subEl = document.getElementById('timerSub');
+
+  nameEl.textContent = currentAddiction.icon + ' ' + currentAddiction.name;
+
+  // Stop ALL running intervals before starting new ones
+  Object.keys(timerIntervals).forEach(k => {
+    clearInterval(timerIntervals[k]);
+    delete timerIntervals[k];
+  });
+
+  if (!startTs) {
+    document.getElementById('timerBigUnits').textContent = '';
+    digitsEl.textContent = '00:00:00';
+    digitsEl.className = 'timer-digits';
+    subEl.textContent = '— не запущен —';
+    setStartBtnState(false);
+    renderRecords();
+    updateSavings();
+    renderBadges();
+    return;
+  }
+
+  const bigUnitsEl = document.getElementById('timerBigUnits');
+
+  function tick() {
+    const now = Date.now();
+    const diff = now - startTs;
+    if (diff < 0) {
+      bigUnitsEl.textContent = '';
+      digitsEl.textContent = '00:00:00';
+      subEl.textContent = 'Начало ещё не наступило';
+      return;
+    }
+    const totalSec = Math.floor(diff / 1000);
+    const years  = Math.floor(totalSec / 31536000);
+    const months = Math.floor((totalSec % 31536000) / 2592000);
+    const days   = Math.floor((totalSec % 2592000) / 86400);
+    const hrs    = Math.floor((totalSec % 86400) / 3600);
+    const mins   = Math.floor((totalSec % 3600) / 60);
+    const secs   = totalSec % 60;
+
+    // Big units: years / months / days
+    const parts = [];
+    if (years  > 0) parts.push(years  + ' ' + plural(years,  'год','года','лет'));
+    if (months > 0) parts.push(months + ' ' + plural(months, 'месяц','месяца','месяцев'));
+    if (days   > 0) parts.push(days   + ' ' + plural(days,   'день','дня','дней'));
+    bigUnitsEl.textContent = parts.join('  ·  ');
+
+    // Small units: hh:mm:ss
+    digitsEl.textContent = `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+    digitsEl.className = 'timer-digits running';
+    subEl.textContent = `С ${new Date(startTs).toLocaleDateString('ru', {day:'numeric',month:'long',year:'numeric'})}`;
+  }
+
+  const key = currentAddiction.key;
+  tick();
+  updateSavings();
+  renderBadges();
+  setStartBtnState(true);
+  timerIntervals[key] = setInterval(() => { tick(); updateSavings(); renderBadges(); }, 30000);
+  timerIntervals[key + '_sec'] = setInterval(tick, 1000);
+  renderRecords();
+}
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function plural(n, one, few, many) {
+  const mod10 = n % 10, mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return one;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return few;
+  return many;
+}
+
+function formatDuration(ms) {
+  const totalSec = Math.floor(ms / 1000);
+  const years  = Math.floor(totalSec / 31536000);
+  const months = Math.floor((totalSec % 31536000) / 2592000);
+  const days   = Math.floor((totalSec % 2592000) / 86400);
+  const hrs    = Math.floor((totalSec % 86400) / 3600);
+  const mins   = Math.floor((totalSec % 3600) / 60);
+  const secs   = totalSec % 60;
+  const parts = [];
+  if (years  > 0) parts.push(years  + ' ' + plural(years,  'год','года','лет'));
+  if (months > 0) parts.push(months + ' ' + plural(months, 'месяц','месяца','месяцев'));
+  if (days   > 0) parts.push(days   + ' ' + plural(days,   'день','дня','дней'));
+  const time = `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+  return parts.length ? parts.join(' ') + '  ' + time : time;
+}
+
+// ===== RELAPSE =====
+function resetTimer() {
+  document.getElementById('resetModal').classList.add('visible');
+}
+
+function closeResetModal() {
+  document.getElementById('resetModal').classList.remove('visible');
+}
+
+function confirmReset() {
+  const data = loadData();
+  delete data.timers[currentAddiction.key];
+  saveData(data);
+  closeResetModal();
+  setStartBtnState(false);
+  updateTimerDisplay();
+  showToast('Таймер сброшен');
+}
+
+function showRelapseModal() {
+  const data = loadData();
+  const startTs = data.timers[currentAddiction.key];
+  if (!startTs) { showToast('Таймер не запущен'); return; }
+  const diff = Date.now() - startTs;
+  if (diff < 0) { showToast('Таймер ещё не начался'); return; }
+  document.getElementById('modalRecord').textContent = formatDuration(diff);
+  document.getElementById('relapseModal').classList.add('visible');
+}
+
+function closeRelapseModal() {
+  document.getElementById('relapseModal').classList.remove('visible');
+}
+
+function confirmRelapse() {
+  const data = loadData();
+  const startTs = data.timers[currentAddiction.key];
+  if (!startTs) return;
+
+  const duration = Date.now() - startTs;
+
+  const savedMoney = getSavedAmount();
+  const reason = document.getElementById('relapseReason').value.trim();
+  data.records.unshift({
+    key: currentAddiction.key,
+    icon: currentAddiction.icon,
+    name: currentAddiction.name,
+    duration,
+    startTs,
+    endTs: Date.now(),
+    savedMoney,
+    reason
+  });
+
+  delete data.timers[currentAddiction.key];
+  saveData(data);
+
+  document.getElementById('relapseReason').value = '';
+  closeRelapseModal();
+  setDefaultDateTime();
+  setStartBtnState(false);
+  updateTimerDisplay();
+  showToast('Не сдавайся — начни снова');
+}
+
+// ===== RECORDS =====
+function renderRecords() {
+  const data = loadData();
+  const records = data.records.filter(r => r.key === currentAddiction.key);
+  const el = document.getElementById('recordsList');
+
+  if (!records.length) {
+    el.innerHTML = '<div class="empty-records">Рекордов пока нет — начни прямо сейчас</div>';
+    return;
+  }
+
+  const best = Math.max(...records.map(r => r.duration));
+
+  el.innerHTML = records.map((r, i) => `
+    <div class="record-item">
+      <div class="record-icon">${r.icon}</div>
+      <div class="record-info">
+        <div class="record-name">${r.name} · Попытка #${records.length - i}</div>
+        <div class="record-duration">${formatDuration(r.duration)}</div>
+        <div class="record-date">${new Date(r.startTs).toLocaleDateString('ru')} → ${new Date(r.endTs).toLocaleDateString('ru')}</div>
+        ${r.savedMoney ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#82C4A0;margin-top:4px">💰 Сэкономил: ${r.savedMoney.toLocaleString('ru')} ₽</div>` : ''}
+        ${r.reason ? `<div style="font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:var(--muted);margin-top:4px;font-style:italic">💬 ${r.reason}</div>` : ''}
+      </div>
+      ${r.duration === best ? '<div class="record-badge">Рекорд</div>' : ''}
+    </div>
+  `).join('');
+}
+
+// ===== DATETIME DEFAULT =====
+function setDefaultDateTime() {
+  const now = new Date();
+  const offset = now.getTimezoneOffset() * 60000;
+  const local = new Date(now.getTime() - offset);
+  document.getElementById('startDateTime').value = local.toISOString().slice(0, 16);
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('visible');
+  setTimeout(() => t.classList.remove('visible'), 2500);
+}
+
+// ===== ARTICLES =====
+const ARTICLES = [
+  {
+    category: 'alcohol',
+    icon: '🍺',
+    tag: 'Алкоголь',
+    title: 'Почему алкоголь — это ловушка: механизм зависимости',
+    preview: 'Алкоголь влияет на дофаминовую систему мозга, создавая иллюзию удовольствия. Со временем мозг перестаёт производить нейромедиаторы самостоятельно.',
+    body: `
+      <h4>Как развивается зависимость</h4>
+      <p>Алкоголь стимулирует выброс дофамина — гормона удовольствия. При регулярном употреблении мозг адаптируется: начинает производить меньше дофамина самостоятельно. Итог — без алкоголя человек чувствует подавленность, тревогу, пустоту.</p>
+      <h4>Стадии алкоголизма</h4>
+      <ul>
+        <li><b>1 стадия</b> — психологическая тяга, потеря контроля над дозой</li>
+        <li><b>2 стадия</b> — физическая зависимость, синдром отмены (тремор, потливость)</li>
+        <li><b>3 стадия</b> — деградация личности, поражение органов</li>
+      </ul>
+      <h4>Что реально помогает</h4>
+      <ul>
+        <li>Медикаментозная терапия (налтрексон, акампросат) — обратитесь к наркологу</li>
+        <li>Группы АА (Анонимные Алкоголики) — бесплатно, анонимно</li>
+        <li>КПТ — когнитивно-поведенческая терапия с психологом</li>
+        <li>Физическая нагрузка восстанавливает дофаминовую систему</li>
+      </ul>
+      <h4>Горячая линия</h4>
+      <p>Бесплатная наркологическая помощь в России: 8-800-200-0-200</p>
+    `
+  },
+  {
+    category: 'alcohol',
+    icon: '💪',
+    tag: 'Алкоголь',
+    title: '30 дней без алкоголя: что происходит с телом',
+    preview: 'Уже через 24 часа уровень сахара нормализуется. Через неделю улучшается сон. Через месяц — кожа, вес, энергия.',
+    body: `
+      <h4>День 1–3</h4>
+      <p>Возможна тревога, бессонница, раздражительность — это синдром отмены. Пей много воды, избегай кофеина. При тяжёлых симптомах (дрожь, галлюцинации) — немедленно к врачу.</p>
+      <h4>День 4–7</h4>
+      <p>Сон становится глубже. Исчезают отёки. Кожа начинает восстанавливаться. Аппетит нормализуется.</p>
+      <h4>День 8–14</h4>
+      <p>Возвращается концентрация. Снижается тревожность. Многие отмечают, что стало легче вставать по утрам.</p>
+      <h4>День 15–30</h4>
+      <p>Снижается давление и холестерин. Печень начинает восстанавливаться. Настроение стабилизируется. Появляется больше энергии.</p>
+      <h4>Совет</h4>
+      <p>Замени ритуал. Если раньше пил вечером — придумай замену: прогулка, горячий душ, звонок другу. Мозг нуждается в новом ритуале, а не просто в отказе от старого.</p>
+    `
+  },
+  {
+    category: 'nicotine',
+    icon: '🚬',
+    tag: 'Никотин',
+    title: 'Бросить курить: почему это так сложно и как всё же сделать это',
+    preview: 'Никотиновая зависимость — одна из самых сильных. Физическая часть проходит за 3 дня. Психологическая длится месяцами.',
+    body: `
+      <h4>Физическая vs психологическая зависимость</h4>
+      <p>Физическая зависимость от никотина проходит за 48–72 часа. Самое тяжёлое время — первые 3 дня. После этого остаётся психологическая зависимость — привычка курить в конкретных ситуациях (после еды, при стрессе, с кофе).</p>
+      <h4>Методы отказа</h4>
+      <ul>
+        <li><b>НЗТ</b> (никотинозамещающая терапия) — пластыри, жвачки. Снижают физическую тягу</li>
+        <li><b>Варениклин (Чампикс)</b> — рецептурный препарат, эффективность ~44%</li>
+        <li><b>Резкий отказ</b> — работает для 20–25% людей</li>
+        <li><b>Постепенное снижение</b> — уменьшай на 1 сигарету в день</li>
+      </ul>
+      <h4>Триггеры и как с ними справляться</h4>
+      <ul>
+        <li>Стресс → 5 глубоких вдохов, стакан воды</li>
+        <li>После еды → сразу встань и пройдись</li>
+        <li>С кофе → замени на чай первые 2 недели</li>
+        <li>Компания курящих → честно скажи, что бросаешь</li>
+      </ul>
+    `
+  },
+  {
+    category: 'gambling',
+    icon: '🎰',
+    tag: 'Лудомания',
+    title: 'Лудомания: когда игра становится болезнью',
+    preview: 'Патологическая зависимость от азартных игр — признанное психическое расстройство (МКБ-11). Мозг лудомана реагирует на почти-выигрыш так же, как на реальный.',
+    body: `
+      <h4>Почему мозг не может остановиться</h4>
+      <p>Казино и букмекеры используют "near miss" эффект — почти-выигрыш вызывает такой же выброс дофамина, как победа. Мозг воспринимает это как "ты почти получил, попробуй ещё". Это не слабоволие — это нейробиология.</p>
+      <h4>Признаки лудомании</h4>
+      <ul>
+        <li>Мысли об игре занимают большую часть времени</li>
+        <li>Ставишь больше, чтобы получить то же возбуждение</li>
+        <li>Продолжаешь игру, чтобы "отыграться"</li>
+        <li>Лжёшь близким о масштабах проигрышей</li>
+        <li>Занимаешь деньги для игры</li>
+      </ul>
+      <h4>Первые шаги</h4>
+      <ul>
+        <li>Самоисключение — попроси казино/букмекера заблокировать аккаунт</li>
+        <li>Блокировка сайтов — приложение Gamban, настройки роутера</li>
+        <li>Группы GA (Анонимные Игроки) — ga.org</li>
+        <li>Передай контроль над деньгами близкому человеку на первое время</li>
+      </ul>
+    `
+  },
+  {
+    category: 'drugs',
+    icon: '💊',
+    tag: 'Наркотики',
+    title: 'Путь к свободе: как работает реабилитация от наркотиков',
+    preview: 'Наркотическая зависимость — хроническое заболевание мозга. Без профессиональной помощи справиться крайне сложно, но это возможно.',
+    body: `
+      <h4>Почему нельзя просто "завязать" самому</h4>
+      <p>При физической зависимости от опиатов, алкоголя или бензодиазепинов резкая отмена может быть опасна для жизни. Это медицинский факт — синдром отмены требует врачебного контроля.</p>
+      <h4>Этапы реабилитации</h4>
+      <ul>
+        <li><b>Детоксикация</b> — под медицинским контролем, снятие физической зависимости</li>
+        <li><b>Реабилитация</b> — работа с психологическими причинами (3–12 месяцев)</li>
+        <li><b>Ресоциализация</b> — возвращение к нормальной жизни, новые связи</li>
+      </ul>
+      <h4>Куда обращаться в России</h4>
+      <ul>
+        <li>Государственные наркологические диспансеры — бесплатно, анонимно</li>
+        <li>Горячая линия: 8-800-200-0-200 (бесплатно)</li>
+        <li>Фонд "Город без наркотиков"</li>
+        <li>Сообщества NA (Анонимные Наркоманы)</li>
+      </ul>
+      <h4>Важно знать</h4>
+      <p>Обращение за помощью — это сила, не слабость. Рецидивы — часть процесса выздоровления, а не провал.</p>
+    `
+  },
+  {
+    category: 'alcohol',
+    icon: '🧠',
+    tag: 'Алкоголь',
+    title: 'Как справляться с тягой: техники на каждый день',
+    preview: '15 минут — именно столько длится острый приступ тяги. Если пережить его, волна спадает. Вот как это сделать.',
+    body: `
+      <h4>Техника "Серфинг тяги"</h4>
+      <p>Не борись с тягой, а наблюдай за ней. Сядь, закрой глаза. Замечай, где в теле ощущается тяга. Дыши. Тяга — это волна: она нарастает, достигает пика и спадает. Обычно за 10–20 минут.</p>
+      <h4>5-4-3-2-1 (техника заземления)</h4>
+      <p>Назови вслух: 5 вещей, которые видишь → 4 вещи, которые можешь потрогать → 3 звука → 2 запаха → 1 вкус. Переключает мозг в "здесь и сейчас".</p>
+      <h4>HALT-проверка</h4>
+      <p>Прежде чем поддаться тяге, спроси себя: я <b>Голоден</b>? <b>Злюсь</b>? <b>Одинок</b>? <b>Устал</b>? Часто тяга — это замаскированная другая потребность.</p>
+      <h4>Список альтернатив</h4>
+      <p>Заранее составь список из 10 действий, которые займут 15 минут: прогулка, холодный душ, звонок другу, отжимания, музыка. В момент тяги мозг не думает — нужен готовый список.</p>
+    `
+  }
+];
+
+function renderArticles() {
+  const filter = document.querySelector('.filter-btn.active')?.dataset?.cat || 'all';
+  const grid = document.getElementById('articlesGrid');
+  const filtered = filter === 'all' ? ARTICLES : ARTICLES.filter(a => a.category === filter);
+
+  grid.innerHTML = filtered.map((a, i) => `
+    <div class="article-card" onclick="toggleArticle(this)">
+      <div class="article-header">
+        <div class="article-icon">${a.icon}</div>
+        <div class="article-meta">
+          <div class="article-tag">${a.tag}</div>
+          <div class="article-title">${a.title}</div>
+        </div>
+      </div>
+      <div class="article-preview">${a.preview}</div>
+      <div class="article-body">${a.body}</div>
+      <div class="read-more">Читать далее →</div>
+    </div>
+  `).join('');
+}
+
+function filterArticles(btn, cat) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  btn.dataset.cat = cat;
+  renderArticles();
+}
+
+function toggleArticle(card) {
+  const body = card.querySelector('.article-body');
+  const link = card.querySelector('.read-more');
+  const isOpen = body.classList.contains('visible');
+  body.classList.toggle('visible');
+  card.classList.toggle('expanded');
+  link.textContent = isOpen ? 'Читать далее →' : 'Свернуть ↑';
+}
+
+
+// ===== SAVINGS =====
+function confirmDailyCost() {
+  const val = parseFloat(document.getElementById('dailyCost').value) || 0;
+  if (!val) { showToast('Введи сумму'); return; }
+  const data = loadData();
+  if (!data.settings) data.settings = {};
+  data.settings[currentAddiction.key + '_daily'] = val;
+  saveData(data);
+  lockSavingsInput(val);
+  updateSavings();
+}
+
+function lockSavingsInput(val) {
+  document.getElementById('savingsInputRow').style.display = 'none';
+  const locked = document.getElementById('savingsLocked');
+  locked.style.display = 'flex';
+  document.getElementById('lockedCostLabel').textContent = val.toLocaleString('ru') + ' ₽';
+}
+
+function unlockDailyCost() {
+  document.getElementById('savingsInputRow').style.display = 'flex';
+  document.getElementById('savingsLocked').style.display = 'none';
+}
+
+function updateSavings() {
+  const data = loadData();
+  const daily = (data.settings && data.settings[currentAddiction.key + '_daily']) || 0;
+  const startTs = data.timers[currentAddiction.key];
+  const display = document.getElementById('savingsDisplay');
+
+  // restore locked state if value exists
+  if (daily) {
+    document.getElementById('dailyCost').value = daily;
+    lockSavingsInput(daily);
+  } else {
+    document.getElementById('savingsInputRow').style.display = 'flex';
+    document.getElementById('savingsLocked').style.display = 'none';
+  }
+
+  if (!daily || !startTs) { display.style.display = 'none'; return; }
+
+  const days = (Date.now() - startTs) / 86400000;
+  const saved = Math.floor(days * daily);
+  const year = Math.floor(daily * 365);
+
+  display.style.display = 'grid';
+  document.getElementById('savedAmount').textContent = saved.toLocaleString('ru') + ' ₽';
+  document.getElementById('yearAmount').textContent = year.toLocaleString('ru') + ' ₽';
+}
+
+function getSavedAmount() {
+  const data = loadData();
+  const daily = (data.settings && data.settings[currentAddiction.key + '_daily']) || 0;
+  const startTs = data.timers[currentAddiction.key];
+  if (!daily || !startTs) return 0;
+  const days = (Date.now() - startTs) / 86400000;
+  return Math.floor(days * daily);
+}
+
+// ===== BADGES =====
+const BADGES = [
+  { id: 'h1',   emoji: '🌱', name: '1 час',     hours: 1/24,   req: '1 час' },
+  { id: 'h12',  emoji: '🌿', name: '12 часов',  hours: 0.5,    req: '12 часов' },
+  { id: 'd1',   emoji: '⭐', name: '1 день',    hours: 1,      req: '1 день' },
+  { id: 'd3',   emoji: '🔥', name: '3 дня',     hours: 3,      req: '3 дня' },
+  { id: 'w1',   emoji: '💪', name: '1 неделя',  hours: 7,      req: '7 дней' },
+  { id: 'w2',   emoji: '🦁', name: '2 недели',  hours: 14,     req: '14 дней' },
+  { id: 'm1',   emoji: '🏅', name: '1 месяц',   hours: 30,     req: '30 дней' },
+  { id: 'm3',   emoji: '🥇', name: '3 месяца',  hours: 90,     req: '90 дней' },
+  { id: 'm6',   emoji: '💎', name: '6 месяцев', hours: 180,    req: '180 дней' },
+  { id: 'y1',   emoji: '👑', name: '1 год',     hours: 365,    req: '365 дней' },
+  { id: 'y2',   emoji: '🌟', name: '2 года',    hours: 730,    req: '2 года' },
+  { id: 'y5',   emoji: '🏆', name: '5 лет',     hours: 1825,   req: '5 лет' },
+];
+
+let prevUnlocked = {};
+
+function renderBadges() {
+  const data = loadData();
+  const startTs = data.timers[currentAddiction.key];
+  const grid = document.getElementById('badgesGrid');
+  const daysPassed = startTs ? (Date.now() - startTs) / 86400000 : 0;
+
+  grid.innerHTML = BADGES.map(b => {
+    const unlocked = daysPassed >= b.hours;
+    const isNew = unlocked && !prevUnlocked[b.id];
+    if (unlocked) prevUnlocked[b.id] = true;
+    return `
+      <div class="badge-item ${unlocked ? 'unlocked' : 'locked'} ${isNew ? 'just-unlocked' : ''}">
+        ${isNew ? '<div class="badge-new">NEW</div>' : ''}
+        <span class="badge-emoji">${b.emoji}</span>
+        <div class="badge-name">${b.name}</div>
+        <div class="badge-req">${b.req}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ===== START BUTTON STATE =====
+function setStartBtnState(running) {
+  const btn = document.querySelector('button[onclick="startNow()"]');
+  const btn2 = document.querySelector('button[onclick="startTimer()"]');
+  const dateInput = document.getElementById('startDateTime');
+  if (running) {
+    if (btn) { btn.disabled = true; btn.textContent = '✓ Запущен'; btn.style.opacity = '0.4'; btn.style.cursor = 'not-allowed'; }
+    if (btn2) { btn2.disabled = true; btn2.style.opacity = '0.3'; btn2.style.cursor = 'not-allowed'; }
+    if (dateInput) { dateInput.disabled = true; dateInput.style.opacity = '0.5'; dateInput.style.cursor = 'not-allowed'; }
+    const rb = document.getElementById('resetBtn'); if (rb) rb.style.display = 'block';
+  } else {
+    if (btn) { btn.disabled = false; btn.textContent = 'С этого момента'; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
+    if (btn2) { btn2.disabled = false; btn2.style.opacity = '1'; btn2.style.cursor = 'pointer'; }
+    if (dateInput) { dateInput.disabled = false; dateInput.style.opacity = '1'; dateInput.style.cursor = 'pointer'; }
+    const rb = document.getElementById('resetBtn'); if (rb) rb.style.display = 'none';
+  }
+}
+
+
+// ===== QUOTES =====
+const QUOTES = [
+  { text: "Падение — это не провал. Провал — это когда ты решаешь не вставать.", author: "Мэри Пикфорд" },
+  { text: "Каждый день — это новый шанс изменить свою жизнь.", author: "Народная мудрость" },
+  { text: "Сила воли — это мышца. Чем больше ты её тренируешь, тем сильнее она становится.", author: "Келли МакГонигал" },
+  { text: "Не важно, как медленно ты идёшь, главное — не останавливаться.", author: "Конфуций" },
+  { text: "Выздоровление — это путешествие, а не пункт назначения.", author: "Народная мудрость" },
+  { text: "Ты не обязан быть великим, чтобы начать. Но ты должен начать, чтобы стать великим.", author: "Зиг Зиглар" },
+  { text: "Один день без зависимости — это победа. Каждый день — это новая победа.", author: "АА" },
+  { text: "Мужество — это не отсутствие страха. Это решение, что кое-что важнее страха.", author: "Амброз Редмун" },
+  { text: "Твоё худшее прошлое не определяет твоё лучшее будущее.", author: "Народная мудрость" },
+  { text: "Исцеление происходит не по прямой линии. Это зигзаг, и это нормально.", author: "Народная мудрость" },
+  { text: "Первый шаг к изменению — это осознание. Второй — принятие.", author: "Натаниэль Бранден" },
+  { text: "Каждое утро — это шанс начать заново.", author: "Народная мудрость" },
+  { text: "Зависимость начинается с боли и заканчивается болью. Выздоровление начинается с честности.", author: "Народная мудрость" },
+  { text: "Ты сильнее своей зависимости. Это факт, даже если сейчас ты в это не веришь.", author: "Народная мудрость" },
+  { text: "Маленький прогресс каждый день складывается в большие результаты.", author: "Народная мудрость" },
+  { text: "Единственный путь — это вперёд. Назад дороги нет, есть только рост.", author: "Народная мудрость" },
+  { text: "Трезвость — это не наказание. Это дар, который ты делаешь себе.", author: "Народная мудрость" },
+  { text: "Ты заслуживаешь жизни, которую строишь своими руками.", author: "Народная мудрость" },
+  { text: "Каждая секунда, в которую ты держишься — это доказательство твоей силы.", author: "Народная мудрость" },
+  { text: "Не жди особого момента. Начни прямо сейчас.", author: "Народная мудрость" },
+  { text: "Выздоровление — это то, что происходит, когда ты перестаёшь убегать от себя.", author: "Народная мудрость" },
+  { text: "Боль временна. Сожаление длится вечно.", author: "Народная мудрость" },
+  { text: "Твоя история ещё не закончена. Лучшие главы впереди.", author: "Народная мудрость" },
+  { text: "Никогда не сдавайся на том, чего хочешь больше всего.", author: "Народная мудрость" },
+  { text: "Зависимость говорит: ты не можешь. Выздоровление доказывает: ты можешь.", author: "Народная мудрость" },
+  { text: "Один день. Один час. Одна минута. Именно так и строится трезвость.", author: "АА" },
+  { text: "Ты не один. Миллионы людей прошли этот путь и победили.", author: "Народная мудрость" },
+  { text: "Твой мозг исцеляется. Твоё тело исцеляется. Доверься процессу.", author: "Народная мудрость" },
+  { text: "Настоящая свобода — это не делать то, что хочется, а делать то, что нужно.", author: "Народная мудрость" },
+  { text: "Сегодня ты снова выбираешь себя. Это требует невероятного мужества.", author: "Народная мудрость" },
+  { text: "Изменение не происходит, если ничего не менять.", author: "Эйнштейн" },
+  { text: "Твоя семья заслуживает лучшей версии тебя. Ты тоже её заслуживаешь.", author: "Народная мудрость" },
+  { text: "Каждый раз, когда ты говоришь «нет» зависимости, ты говоришь «да» жизни.", author: "Народная мудрость" },
+  { text: "Страх — это не стоп-сигнал. Это просто сигнал, что впереди что-то важное.", author: "Народная мудрость" },
+  { text: "Нет ничего невозможного для того, кто решил победить.", author: "Народная мудрость" },
+  { text: "Выздоровление — это не слабость. Это самое смелое, что ты делал в жизни.", author: "Народная мудрость" },
+  { text: "Ты уже выжил в самые тёмные дни. Это доказывает, что ты сильнее, чем думаешь.", author: "Народная мудрость" },
+  { text: "Тело помнит каждый день трезвости. Оно благодарно тебе.", author: "Народная мудрость" },
+  { text: "Прошлое нельзя изменить. Но будущее — в твоих руках прямо сейчас.", author: "Народная мудрость" },
+  { text: "Тяга длится 15 минут. Твоя жизнь длится гораздо дольше.", author: "Народная мудрость" },
+  { text: "Ты не лечишь зависимость — ты учишься жить по-другому.", author: "Народная мудрость" },
+  { text: "Когда всё кажется невозможным, вспомни, как далеко ты уже зашёл.", author: "Народная мудрость" },
+  { text: "Честность с собой — это начало исцеления.", author: "Народная мудрость" },
+  { text: "Самый тёмный час — перед рассветом.", author: "Томас Фуллер" },
+  { text: "Ты не должен чувствовать себя хорошо, чтобы двигаться вперёд.", author: "Народная мудрость" },
+  { text: "Просить о помощи — это сила, а не слабость.", author: "Народная мудрость" },
+  { text: "Каждый трезвый день — это инвестиция в себя с огромной отдачей.", author: "Народная мудрость" },
+  { text: "Ты заслуживаешь любви — прежде всего своей собственной.", author: "Народная мудрость" },
+  { text: "Срыв — это не конец пути. Это часть обучения.", author: "Народная мудрость" },
+  { text: "Не сравнивай свой путь с чужим. У каждого своя скорость исцеления.", author: "Народная мудрость" },
+  { text: "Мир без зависимости — это мир, который ты строишь кирпичик за кирпичиком.", author: "Народная мудрость" },
+  { text: "Ты уже делаешь самое трудное. Ты борешься.", author: "Народная мудрость" },
+  { text: "Терпение — это не ожидание. Это сохранение правильного отношения во время ожидания.", author: "Народная мудрость" },
+  { text: "Твоя боль реальна. Твоя сила тоже реальна.", author: "Народная мудрость" },
+  { text: "Небольшие победы заслуживают большого праздника.", author: "Народная мудрость" },
+  { text: "Жизнь в трезвости — это не меньше удовольствия. Это другие удовольствия.", author: "Народная мудрость" },
+  { text: "Иногда единственный выход — это пройти через это.", author: "Народная мудрость" },
+  { text: "Твоё тело хочет быть здоровым. Помоги ему.", author: "Народная мудрость" },
+  { text: "В самые тяжёлые моменты помни: это тоже пройдёт.", author: "Народная мудрость" },
+  { text: "Ты не можешь вернуться назад и изменить начало. Но можешь начать сейчас и изменить конец.", author: "К.С. Льюис" },
+  { text: "Настоящее мужество — это делать правильное даже когда это трудно.", author: "Народная мудрость" },
+  { text: "Ты не просто бросаешь зависимость. Ты обретаешь себя.", author: "Народная мудрость" },
+  { text: "Каждый шаг вперёд — это победа, которую никто не может у тебя отнять.", author: "Народная мудрость" },
+  { text: "Доверяй процессу. Исцеление требует времени.", author: "Народная мудрость" },
+  { text: "Ты важен. Твоя жизнь имеет ценность. Ты нужен этому миру.", author: "Народная мудрость" },
+  { text: "Когда ты устал бороться — отдохни, но не сдавайся.", author: "Народная мудрость" },
+  { text: "Лучший день для изменений — сегодня.", author: "Народная мудрость" },
+  { text: "Ты не провальный человек. Ты человек, который борется.", author: "Народная мудрость" },
+  { text: "Твоя история может вдохновить того, кто ещё не начал свой путь.", author: "Народная мудрость" },
+  { text: "Люди вокруг тебя верят в тебя больше, чем ты думаешь.", author: "Народная мудрость" },
+  { text: "Сегодня ты сильнее, чем вчера. Завтра будешь сильнее, чем сегодня.", author: "Народная мудрость" },
+  { text: "Не нужно видеть всю лестницу. Просто сделай первый шаг.", author: "Мартин Лютер Кинг" },
+  { text: "Твоя воля сильнее любой зависимости, если ты дашь ей шанс.", author: "Народная мудрость" },
+  { text: "Прощение себя — это не оправдание. Это освобождение.", author: "Народная мудрость" },
+  { text: "Каждый трудный момент, который ты пережил — сделал тебя тем, кто ты есть.", author: "Народная мудрость" },
+  { text: "Ты выбираешь жизнь. Снова и снова. Это и есть выздоровление.", author: "Народная мудрость" },
+  { text: "Не бойся медленного прогресса. Бойся стоять на месте.", author: "Китайская пословица" },
+  { text: "Твои дети, друзья, близкие — они нуждаются в тебе настоящем.", author: "Народная мудрость" },
+  { text: "Зависимость лжёт. Она говорит, что без неё тебе будет хуже. Это неправда.", author: "Народная мудрость" },
+  { text: "Исцеление — это не прямая линия. Но каждый шаг имеет значение.", author: "Народная мудрость" },
+  { text: "Ты заслуживаешь сна без тревоги, утра без стыда, жизни без страха.", author: "Народная мудрость" },
+  { text: "Смелость — это не отсутствие сомнений. Это движение вперёд несмотря на них.", author: "Народная мудрость" },
+  { text: "Сила не в том, чтобы никогда не падать. Сила в том, чтобы подниматься каждый раз.", author: "Народная мудрость" },
+  { text: "Ты не один на этом пути. Миллионы людей идут рядом с тобой.", author: "Народная мудрость" },
+  { text: "Твои нейроны восстанавливаются. Твой мозг учится радости заново.", author: "Нейронаука" },
+  { text: "Скучать — это нормально. Справляться со скукой без зависимости — это навык.", author: "Народная мудрость" },
+  { text: "Чем дольше ты держишься, тем легче становится. Это не слова — это нейробиология.", author: "Нейронаука" },
+  { text: "Признать проблему — это уже половина решения.", author: "Народная мудрость" },
+  { text: "Каждый день трезвости — это подарок себе и своим близким.", author: "Народная мудрость" },
+  { text: "Ты стоишь борьбы. Ты стоишь усилий. Ты стоишь исцеления.", author: "Народная мудрость" },
+  { text: "Жизнь без зависимости — это не жертва. Это свобода.", author: "Народная мудрость" },
+  { text: "Тело, которое ты сейчас восстанавливаешь — будет служить тебе годами.", author: "Народная мудрость" },
+  { text: "Самый важный шаг — тот, который ты делаешь сегодня.", author: "Народная мудрость" },
+  { text: "Не сравнивай себя с тем, кем ты был в худшие дни. Смотри, кем ты становишься.", author: "Народная мудрость" },
+  { text: "Ты не просто выживаешь — ты учишься жить.", author: "Народная мудрость" },
+];
+
+let lastQuoteIndex = -1;
+
+function showNewQuote() {
+  const btn = document.querySelector('.quote-refresh');
+  if (btn) btn.style.transform = 'rotate(180deg)';
+  setTimeout(() => { if (btn) btn.style.transform = 'rotate(0deg)'; }, 400);
+
+  let idx;
+  do { idx = Math.floor(Math.random() * QUOTES.length); } while (idx === lastQuoteIndex);
+  lastQuoteIndex = idx;
+
+  const q = QUOTES[idx];
+  document.getElementById('quoteText').textContent = '«' + q.text + '»';
+  document.getElementById('quoteAuthor').textContent = '— ' + q.author;
+}
+
+
+// ===== TESTS DATA =====
+const TESTS = {
+  alcohol: {
+    title: 'Тест AUDIT — Алкоголь',
+    desc: 'Международный тест для выявления алкогольной зависимости (ВОЗ). Отвечайте честно — результаты видите только вы.',
+    questions: [
+      { text: 'Как часто вы употребляете алкоголь?', options: ['Никогда (0)', 'Раз в месяц или реже (1)', '2–4 раза в месяц (2)', '2–3 раза в неделю (3)', '4 и более раз в неделю (4)'] },
+      { text: 'Сколько стандартных доз алкоголя вы выпиваете за один раз?', options: ['1–2 (0)', '3–4 (1)', '5–6 (2)', '7–9 (3)', '10 и более (4)'] },
+      { text: 'Как часто вы выпиваете 6 или более доз за один раз?', options: ['Никогда (0)', 'Реже раза в месяц (1)', 'Раз в месяц (2)', 'Раз в неделю (3)', 'Ежедневно или почти (4)'] },
+      { text: 'Как часто за последний год вы не могли остановиться, начав пить?', options: ['Никогда (0)', 'Реже раза в месяц (1)', 'Раз в месяц (2)', 'Раз в неделю (3)', 'Ежедневно или почти (4)'] },
+      { text: 'Как часто за последний год из-за алкоголя вы не делали то, что должны были?', options: ['Никогда (0)', 'Реже раза в месяц (1)', 'Раз в месяц (2)', 'Раз в неделю (3)', 'Ежедневно или почти (4)'] },
+      { text: 'Как часто за последний год вам нужна была выпивка утром после бурной ночи?', options: ['Никогда (0)', 'Реже раза в месяц (1)', 'Раз в месяц (2)', 'Раз в неделю (3)', 'Ежедневно или почти (4)'] },
+      { text: 'Как часто за последний год вы чувствовали вину или угрызения совести после выпивки?', options: ['Никогда (0)', 'Реже раза в месяц (1)', 'Раз в месяц (2)', 'Раз в неделю (3)', 'Ежедневно или почти (4)'] },
+      { text: 'Как часто за последний год вы не могли вспомнить, что было накануне?', options: ['Никогда (0)', 'Реже раза в месяц (1)', 'Раз в месяц (2)', 'Раз в неделю (3)', 'Ежедневно или почти (4)'] },
+      { text: 'Получали ли вы или кто-то другой травму из-за вашего употребления алкоголя?', options: ['Нет (0)', 'Да, но не за последний год (2)', 'Да, за последний год (4)'] },
+      { text: 'Выражал ли кто-то из близких беспокойство по поводу вашего употребления алкоголя?', options: ['Нет (0)', 'Да, но не за последний год (2)', 'Да, за последний год (4)'] },
+    ],
+    levels: [
+      { max: 7,  emoji: '✅', level: 'Низкий риск', cls: 'low', desc: 'Ваши результаты указывают на безопасное употребление алкоголя или полное воздержание. Продолжайте в том же духе.', tips: ['Придерживайтесь умеренного употребления', 'Не пейте натощак', 'Устраивайте "сухие" дни каждую неделю'] },
+      { max: 15, emoji: '⚠️', level: 'Рискованное употребление', cls: 'medium', desc: 'Ваш уровень употребления алкоголя повышен. Это может со временем привести к зависимости и проблемам со здоровьем.', tips: ['Сократите количество выпиваемого', 'Ведите дневник употребления', 'Поговорите с врачом', 'Найдите альтернативные способы расслабления'] },
+      { max: 19, emoji: '🚨', level: 'Вредное употребление', cls: 'high', desc: 'Вы употребляете алкоголь на уровне, который уже наносит вред здоровью. Рекомендуется обратиться за помощью.', tips: ['Обратитесь к наркологу', 'Рассмотрите группы АА', 'Не прекращайте резко без медицинского контроля', 'Позвоните на горячую линию: 8-800-200-0-200'] },
+      { max: 40, emoji: '🆘', level: 'Зависимость', cls: 'high', desc: 'Результаты теста указывают на алкогольную зависимость. Пожалуйста, обратитесь за профессиональной помощью — это важно для вашей жизни и здоровья.', tips: ['Срочно обратитесь к наркологу', 'Детоксикация только под медицинским наблюдением', 'Горячая линия: 8-800-200-0-200 (бесплатно)', 'Группы АА есть в каждом городе'] },
+    ]
+  },
+  nicotine: {
+    title: 'Тест Фагерстрёма — Никотин',
+    desc: 'Классический тест для оценки степени никотиновой зависимости. Используется врачами во всём мире.',
+    questions: [
+      { text: 'Как скоро после пробуждения вы закуриваете первую сигарету?', options: ['В течение 5 минут (3)', 'В течение 6–30 минут (2)', 'В течение 31–60 минут (1)', 'Более чем через 60 минут (0)'] },
+      { text: 'Трудно ли вам воздерживаться от курения в местах, где это запрещено?', options: ['Да (1)', 'Нет (0)'] },
+      { text: 'От какой сигареты вам труднее всего отказаться?', options: ['От первой утром (1)', 'От любой другой (0)'] },
+      { text: 'Сколько сигарет в день вы выкуриваете?', options: ['10 или меньше (0)', '11–20 (1)', '21–30 (2)', '31 и более (3)'] },
+      { text: 'Курите ли вы больше в первые несколько часов после пробуждения?', options: ['Да (1)', 'Нет (0)'] },
+      { text: 'Курите ли вы, когда болеете и вынуждены оставаться в постели?', options: ['Да (1)', 'Нет (0)'] },
+    ],
+    levels: [
+      { max: 2,  emoji: '✅', level: 'Слабая зависимость', cls: 'low', desc: 'У вас слабая физическая зависимость от никотина. Бросить курить будет относительно несложно — психологическая составляющая важнее физической.', tips: ['Выберите дату отказа и придерживайтесь её', 'Скажите близким о своём решении', 'Найдите замену ритуалу курения'] },
+      { max: 4,  emoji: '⚠️', level: 'Средняя зависимость', cls: 'medium', desc: 'У вас средняя никотиновая зависимость. Возможны симптомы отмены при отказе — раздражительность, тревога, трудности с концентрацией.', tips: ['Рассмотрите никотинозамещающую терапию (пластыри, жвачки)', 'Подготовьтесь к первым трём дням — они самые сложные', 'Используйте приложения для отслеживания прогресса'] },
+      { max: 7,  emoji: '🚨', level: 'Высокая зависимость', cls: 'high', desc: 'У вас высокая никотиновая зависимость. Самостоятельный отказ будет сложным — рекомендуется медицинская поддержка.', tips: ['Обратитесь к врачу за назначением варениклина', 'НЗТ в высокой дозе поможет при отмене', 'Не сдавайтесь после первой неудачной попытки — среднее число попыток до успеха: 8–10'] },
+      { max: 10, emoji: '🆘', level: 'Очень высокая зависимость', cls: 'high', desc: 'Очень высокая степень зависимости. Без медицинской помощи бросить крайне сложно, но возможно.', tips: ['Сочетание медикаментов и психотерапии наиболее эффективно', 'Варениклин + КПТ даёт лучшие результаты', 'Не пытайтесь резко бросить без поддержки'] },
+    ]
+  },
+  gambling: {
+    title: 'Тест SOGS — Лудомания',
+    desc: 'Тест на выявление патологической склонности к азартным играм. Разработан психиатрами Lesieur & Blume.',
+    questions: [
+      { text: 'Возвращались ли вы в другой день, чтобы отыграть проигранные деньги?', options: ['Никогда (0)', 'Иногда (1)', 'Большую часть проигрышей (2)', 'Каждый раз (2)'] },
+      { text: 'Заявляли ли вы когда-нибудь, что выигрывали деньги, хотя на самом деле проигрывали?', options: ['Никогда (0)', 'Да, иногда (1)', 'Да, большую часть времени (2)'] },
+      { text: 'Чувствовали ли вы когда-нибудь, что у вас проблемы с азартными играми?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Играли ли вы когда-нибудь в азартные игры на большую сумму, чем планировали?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Критиковали ли вас люди за игру или говорили, что у вас проблема?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Чувствовали ли вы вину из-за того, как вы играете или что происходит, когда вы играете?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Хотели ли вы когда-нибудь прекратить играть, но чувствовали, что не можете?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Прятали ли вы квитанции, лотерейные билеты от супруга/родных?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Спорили ли вы с людьми, которые вам близки, из-за денег, связанных с игрой?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Одалживали ли вы деньги для игры или чтобы покрыть долги от игры?', options: ['Нет (0)', 'Да (1)'] },
+    ],
+    levels: [
+      { max: 1,  emoji: '✅', level: 'Нет признаков зависимости', cls: 'low', desc: 'Тест не выявил признаков патологической игровой зависимости. Вы контролируете своё поведение.', tips: ['Установите чёткий бюджет на развлечения', 'Никогда не играйте в долг', 'Азартные игры — развлечение, а не способ заработка'] },
+      { max: 4,  emoji: '⚠️', level: 'Рискованное поведение', cls: 'medium', desc: 'Некоторые ваши ответы указывают на проблемное игровое поведение. Стоит обратить на это внимание, пока ситуация не ухудшилась.', tips: ['Ограничьте время и деньги на игру', 'Расскажите близкому человеку о своих переживаниях', 'Попробуйте "сухой" месяц без игр'] },
+      { max: 10, emoji: '🆘', level: 'Патологическая зависимость', cls: 'high', desc: 'Результаты теста указывают на патологическую игровую зависимость. Это медицинская проблема, которая поддаётся лечению.', tips: ['Обратитесь к психиатру или психотерапевту', 'Группы GA (Анонимные Игроки) — ga.org', 'Попросите кого-то контролировать ваши финансы', 'Заблокируйте доступ к игровым сайтам'] },
+    ]
+  },
+  drugs: {
+    title: 'Тест DAST-10 — Наркотики',
+    desc: 'Тест для выявления злоупотребления наркотическими веществами. Все ответы конфиденциальны.',
+    questions: [
+      { text: 'Употребляли ли вы наркотики в немедицинских целях за последние 12 месяцев?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Употребляли ли вы более одного вида наркотика за раз?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Могли ли вы прекратить употреблять наркотики, когда хотели?', options: ['Да (0)', 'Нет (1)'] },
+      { text: 'Бывали ли у вас провалы в памяти или флэшбэки в результате употребления наркотиков?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Чувствовали ли вы себя плохо или виноватым из-за употребления наркотиков?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Жаловались ли ваш супруг/партнёр/родители на употребление вами наркотиков?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Пренебрегали ли вы семьёй из-за употребления наркотиков?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Занимались ли вы незаконной деятельностью для получения наркотиков?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Были ли у вас симптомы отмены при прекращении употребления наркотиков?', options: ['Нет (0)', 'Да (1)'] },
+      { text: 'Обращались ли вы за медицинской помощью в связи с употреблением наркотиков?', options: ['Нет (0)', 'Да (1)'] },
+    ],
+    levels: [
+      { max: 0,  emoji: '✅', level: 'Нет признаков', cls: 'low', desc: 'Тест не выявил признаков злоупотребления наркотиками.', tips: ['Продолжайте вести здоровый образ жизни', 'Будьте внимательны к предложениям попробовать что-то новое'] },
+      { max: 2,  emoji: '⚠️', level: 'Низкий уровень', cls: 'low', desc: 'Выявлен низкий уровень проблем. Стоит внимательно следить за своим поведением.', tips: ['Поговорите с кем-то, кому доверяете', 'Найдите здоровые способы справляться со стрессом'] },
+      { max: 5,  emoji: '🚨', level: 'Умеренный уровень', cls: 'medium', desc: 'Умеренный уровень проблем с наркотиками. Рекомендуется обратиться за помощью.', tips: ['Запишитесь на консультацию к специалисту', 'Горячая линия: 8-800-200-0-200', 'Группы NA (Анонимные Наркоманы)'] },
+      { max: 10, emoji: '🆘', level: 'Высокий уровень зависимости', cls: 'high', desc: 'Результаты указывают на серьёзную зависимость. Пожалуйста, обратитесь за профессиональной помощью.', tips: ['Немедленно обратитесь в наркологический диспансер', 'Детоксикация только под медицинским контролем', '8-800-200-0-200 — бесплатная анонимная помощь', 'Не прекращайте употребление резко без врача'] },
+    ]
+  }
+};
+
+let currentTest = null;
+let currentQuestion = 0;
+let testAnswers = [];
+
+function startTest(type) {
+  currentTest = TESTS[type];
+  currentQuestion = 0;
+  testAnswers = new Array(currentTest.questions.length).fill(null);
+  document.getElementById('testSelector').style.display = 'none';
+  document.getElementById('testArea').style.display = 'block';
+  document.getElementById('testResult').classList.remove('visible');
+  document.getElementById('testTitle').textContent = currentTest.title;
+  document.getElementById('testDesc').textContent = currentTest.desc;
+  renderTestQuestion();
+}
+
+function renderTestQuestion() {
+  const q = currentTest.questions[currentQuestion];
+  const total = currentTest.questions.length;
+  document.getElementById('testProgress').style.width = ((currentQuestion / total) * 100) + '%';
+  document.getElementById('testPrevBtn').style.display = currentQuestion > 0 ? 'block' : 'none';
+  document.getElementById('testNextBtn').textContent = currentQuestion === total - 1 ? 'Показать результат' : 'Далее →';
+
+  document.getElementById('testQuestions').innerHTML = `
+    <div class="test-question-card">
+      <div class="test-question-num">Вопрос ${currentQuestion + 1} из ${total}</div>
+      <div class="test-question-text">${q.text}</div>
+      <div class="test-options">
+        ${q.options.map((opt, i) => `
+          <button class="test-option ${testAnswers[currentQuestion] === i ? 'selected' : ''}"
+            onclick="selectOption(${i})">${opt.replace(/ \(\d+\)$/, '')}</button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function selectOption(idx) {
+  testAnswers[currentQuestion] = idx;
+  renderTestQuestion();
+}
+
+function testNext() {
+  if (testAnswers[currentQuestion] === null) { showToast('Выберите ответ'); return; }
+  if (currentQuestion < currentTest.questions.length - 1) {
+    currentQuestion++;
+    renderTestQuestion();
+  } else {
+    showTestResult();
+  }
+}
+
+function testPrev() {
+  if (currentQuestion > 0) { currentQuestion--; renderTestQuestion(); }
+}
+
+function showTestResult() {
+  let score = 0;
+  currentTest.questions.forEach((q, i) => {
+    const match = q.options[testAnswers[i]].match(/\((\d+)\)$/);
+    if (match) score += parseInt(match[1]);
+  });
+
+  const level = currentTest.levels.find(l => score <= l.max) || currentTest.levels[currentTest.levels.length - 1];
+
+  document.getElementById('testProgress').style.width = '100%';
+  document.getElementById('testQuestions').style.display = 'none';
+  document.querySelector('.test-nav').style.display = 'none';
+
+  document.getElementById('resultEmoji').textContent = level.emoji;
+  document.getElementById('resultLevel').textContent = level.level;
+  document.getElementById('resultLevel').className = 'result-level ' + level.cls;
+  document.getElementById('resultScore').textContent = `Результат: ${score} из ${currentTest.levels[currentTest.levels.length-1].max} баллов`;
+  document.getElementById('resultDesc').textContent = level.desc;
+  document.getElementById('resultTips').innerHTML = `<h4>Рекомендации</h4><ul>${level.tips.map(t => `<li>${t}</li>`).join('')}</ul>`;
+  document.getElementById('testResult').classList.add('visible');
+}
+
+function backToSelector() {
+  currentTest = null;
+  document.getElementById('testSelector').style.display = 'block';
+  document.getElementById('testArea').style.display = 'none';
+  document.getElementById('testQuestions').style.display = 'block';
+  document.querySelector('.test-nav').style.display = 'flex';
+}
+
+
+// ===== ONBOARDING =====
+let obSelectedAddiction = null;
+
+function checkOnboarding() {
+  const done = localStorage.getItem('sila_voli_onboarded');
+  if (done) {
+    document.getElementById('onboardingOverlay').style.display = 'none';
+  }
+}
+
+function obNext(step) {
+  document.querySelectorAll('.onboarding-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('obStep' + step).classList.add('active');
+}
+
+function obSelectAddiction(btn, key, icon, name) {
+  document.querySelectorAll('.onboarding-addiction-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  obSelectedAddiction = { key, icon, name };
+  const nextBtn = document.getElementById('obStep2Btn');
+  nextBtn.disabled = false;
+  nextBtn.style.opacity = '1';
+  nextBtn.style.cursor = 'pointer';
+}
+
+function finishOnboarding() {
+  localStorage.setItem('sila_voli_onboarded', '1');
+
+  // Apply selected addiction if chosen
+  if (obSelectedAddiction) {
+    const btn = document.querySelector(`.addiction-btn[onclick*="${obSelectedAddiction.key}"]`);
+    if (btn) selectAddiction(btn, obSelectedAddiction.key, obSelectedAddiction.icon, obSelectedAddiction.name);
+  }
+
+  const overlay = document.getElementById('onboardingOverlay');
+  overlay.classList.add('hiding');
+  setTimeout(() => { overlay.style.display = 'none'; }, 500);
+}
+
+// ===== INIT =====
+setDefaultDateTime();
+updateTimerDisplay();
+updateSavings();
+renderBadges();
+showNewQuote();
+checkOnboarding();
+</script>
+</body>
+</html>
