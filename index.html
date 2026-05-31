@@ -16,6 +16,7 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%234a7fb5'/%3E%3Cpath d='M70 380 L180 200 L240 270 L320 110 L420 270 L470 220 L470 380 Z' fill='white'/%3E%3C/svg%3E">
 
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
     --bg: #e8f0fa;
@@ -2368,6 +2369,41 @@
     flex-shrink: 0;
   }
 
+  /* ===== ACCOUNT / AUTH CSS ===== */
+  .auth-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+  .auth-tab {
+    flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--muted);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .auth-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .auth-input {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+  .auth-input:focus { border-color: var(--accent); }
+  .auth-error {
+    color: #d63d3d; font-size: 13px; font-family: 'DM Sans', sans-serif;
+    margin-bottom: 10px; min-height: 18px; text-align: center;
+  }
+  .account-status {
+    display: flex; align-items: center; gap: 12px; padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .account-avatar {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, #4a7fb5, #5aaecc); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 18px;
+  }
+  .account-info { flex: 1; min-width: 0; }
+  .account-nick { font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 15px; color: var(--text); }
+  .account-email { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sync-badge { font-family: 'DM Mono', monospace; font-size: 10px; color: #2e7d5e; }
+
 </style>
 </head>
 <body style="background: linear-gradient(135deg, #ddeeff 0%, #e8f0fa 40%, #d6e8f7 70%, #e0edf8 100%) fixed !important">
@@ -2495,6 +2531,22 @@
     </svg>
     <span class="logo-text" style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:800;letter-spacing:3px;color:#2c3e50;text-transform:uppercase">СИЛА ВОЛИ</span>
   </div>
+
+  <!-- Account section -->
+  <div id="accountLoggedOut">
+    <button class="burger-data-btn" onclick="burgerClose();openAuth()" style="border-top:none"><span class="burger-item-icon">&#9729;&#65039;</span>Войти / Создать аккаунт</button>
+  </div>
+  <div id="accountLoggedIn" style="display:none">
+    <div class="account-status">
+      <div class="account-avatar" id="accountAvatar">?</div>
+      <div class="account-info">
+        <div class="account-nick" id="accountNick">—</div>
+        <div class="account-email" id="accountEmail">—</div>
+        <div class="sync-badge">☁️ синхронизировано</div>
+      </div>
+    </div>
+    <button class="burger-data-btn" onclick="logoutAccount()"><span class="burger-item-icon">&#128682;</span>Выйти из аккаунта</button>
+  </div>
   <button class="burger-item" onclick="burgerGo('timer')"><span class="burger-item-icon">&#9200;</span>Таймер</button>
   <button class="burger-item" onclick="burgerGo('articles')"><span class="burger-item-icon">&#128214;</span>Статьи</button>
   <button class="burger-item" onclick="burgerGo('tests')"><span class="burger-item-icon">&#129514;</span>Тесты</button>
@@ -2526,6 +2578,7 @@
   <button class="burger-data-btn" onclick="exportData()"><span class="burger-item-icon">&#128190;</span>Сохранить данные в файл</button>
   <button class="burger-data-btn" onclick="document.getElementById('importFile').click()"><span class="burger-item-icon">&#128229;</span>Загрузить данные из файла</button>
   <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importData(event)">
+  <a href="./privacy.html" class="burger-data-btn" style="text-decoration:none"><span class="burger-item-icon">&#128274;</span>Политика конфиденциальности</a>
   <div class="burger-footer">Сила Воли — бесплатное приложение для людей, борющихся с зависимостями.</div>
 </div>
 
@@ -3168,6 +3221,27 @@
   </div>
 </div>
 
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <div class="modal-icon">☁️</div>
+    <h2 id="authTitle">Вход в аккаунт</h2>
+    <p>Войди или создай аккаунт, чтобы твой прогресс сохранялся и был доступен с любого устройства.</p>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="authTabLogin" onclick="switchAuthTab('login')">Вход</button>
+      <button class="auth-tab" id="authTabRegister" onclick="switchAuthTab('register')">Регистрация</button>
+    </div>
+    <input type="text" id="authNick" class="auth-input" placeholder="Никнейм" style="display:none">
+    <input type="email" id="authEmail" class="auth-input" placeholder="Почта" autocomplete="email">
+    <input type="password" id="authPassword" class="auth-input" placeholder="Пароль (минимум 6 символов)" autocomplete="current-password">
+    <div class="auth-error" id="authError"></div>
+    <div class="modal-buttons">
+      <button class="btn btn-cancel" onclick="document.getElementById('authModal').classList.remove('visible')">Закрыть</button>
+      <button class="btn btn-primary" id="authSubmitBtn" onclick="submitAuth()">Войти</button>
+    </div>
+  </div>
+</div>
+
 <!-- EXPORT MODAL -->
 <div class="modal-overlay" id="exportModal">
   <div class="modal" style="text-align:left">
@@ -3205,6 +3279,28 @@ var timerIntervals = {}; // per-addiction intervals
 
 var STORAGE_KEY = 'zavyazka_v1';
 
+// ============================================================
+// ОБЛАЧНЫЕ АККАУНТЫ (Supabase)
+// Чтобы включить — вставь сюда свои ключи из Supabase (Settings → API).
+// Пока стоят заглушки, приложение работает офлайн как обычно.
+// ============================================================
+var SUPABASE_URL = 'ВСТАВЬ_СЮДА_PROJECT_URL';
+var SUPABASE_ANON_KEY = 'ВСТАВЬ_СЮДА_ANON_KEY';
+
+var cloudEnabled = false;
+var sb = null;
+var currentUser = null;
+var syncTimer = null;
+
+function initCloud() {
+  if (SUPABASE_URL.indexOf('http') !== 0 || SUPABASE_ANON_KEY.indexOf('ВСТАВЬ') === 0) return;
+  if (typeof supabase === 'undefined') return;
+  try {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    cloudEnabled = true;
+  } catch(e) { cloudEnabled = false; }
+}
+
 function loadData() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { timers: {}, records: [] };
@@ -3213,7 +3309,172 @@ function loadData() {
 
 function saveData(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  // Push to cloud if logged in (debounced)
+  if (cloudEnabled && currentUser) {
+    if (syncTimer) clearTimeout(syncTimer);
+    syncTimer = setTimeout(pushToCloud, 1500);
+  }
 }
+
+function gatherAllData() {
+  return {
+    main: localStorage.getItem(STORAGE_KEY),
+    reason: localStorage.getItem('silavoli_reason'),
+    contact: localStorage.getItem('silavoli_contact'),
+    letter: localStorage.getItem('silavoli_letter'),
+    taskDone: localStorage.getItem('silavoli_task_done'),
+    theme: localStorage.getItem('silavoli_theme')
+  };
+}
+function applyAllData(blob) {
+  if (!blob) return;
+  if (blob.main) localStorage.setItem(STORAGE_KEY, blob.main);
+  if (blob.reason) localStorage.setItem('silavoli_reason', blob.reason);
+  if (blob.contact) localStorage.setItem('silavoli_contact', blob.contact);
+  if (blob.letter) localStorage.setItem('silavoli_letter', blob.letter);
+  if (blob.taskDone) localStorage.setItem('silavoli_task_done', blob.taskDone);
+  if (blob.theme) localStorage.setItem('silavoli_theme', blob.theme);
+}
+
+function pushToCloud() {
+  if (!cloudEnabled || !currentUser) return;
+  var payload = { blob: gatherAllData(), updated_at: new Date().toISOString() };
+  sb.from('user_data').upsert({
+    user_id: currentUser.id,
+    data: payload,
+    updated_at: payload.updated_at
+  }).then(function(){ /* synced */ }, function(){ /* fail silently, kept locally */ });
+}
+
+function pullFromCloud(onDone) {
+  if (!cloudEnabled || !currentUser) { if(onDone) onDone(); return; }
+  sb.from('user_data').select('data').eq('user_id', currentUser.id).maybeSingle().then(function(res) {
+    if (res && res.data && res.data.data && res.data.data.blob) {
+      applyAllData(res.data.data.blob);
+    } else {
+      // No cloud data yet — push current local data up
+      pushToCloud();
+    }
+    if (onDone) onDone();
+  }, function(){ if(onDone) onDone(); });
+}
+
+// ---- Auth UI ----
+var authMode = 'login';
+function openAuth() {
+  if (!cloudEnabled) {
+    showToast('Аккаунты ещё не настроены (нужны ключи Supabase)');
+    return;
+  }
+  document.getElementById('authError').textContent = '';
+  switchAuthTab('login');
+  document.getElementById('authModal').classList.add('visible');
+}
+function switchAuthTab(mode) {
+  authMode = mode;
+  document.getElementById('authTabLogin').classList.toggle('active', mode === 'login');
+  document.getElementById('authTabRegister').classList.toggle('active', mode === 'register');
+  document.getElementById('authNick').style.display = mode === 'register' ? 'block' : 'none';
+  document.getElementById('authTitle').textContent = mode === 'register' ? 'Создать аккаунт' : 'Вход в аккаунт';
+  document.getElementById('authSubmitBtn').textContent = mode === 'register' ? 'Создать' : 'Войти';
+  document.getElementById('authError').textContent = '';
+}
+function submitAuth() {
+  var email = document.getElementById('authEmail').value.trim();
+  var pass = document.getElementById('authPassword').value;
+  var nick = document.getElementById('authNick').value.trim();
+  var errEl = document.getElementById('authError');
+  errEl.textContent = '';
+  if (!email || !pass) { errEl.textContent = 'Заполни почту и пароль'; return; }
+  if (authMode === 'register' && !nick) { errEl.textContent = 'Придумай никнейм'; return; }
+  if (pass.length < 6) { errEl.textContent = 'Пароль минимум 6 символов'; return; }
+
+  var btn = document.getElementById('authSubmitBtn');
+  btn.textContent = '...'; btn.disabled = true;
+
+  if (authMode === 'register') {
+    sb.auth.signUp({ email: email, password: pass, options: { data: { nickname: nick } } }).then(function(res) {
+      btn.disabled = false; btn.textContent = 'Создать';
+      if (res.error) { errEl.textContent = translateAuthError(res.error.message); return; }
+      if (res.data.user && !res.data.session) {
+        errEl.style.color = '#2e7d5e';
+        errEl.textContent = 'Почти готово! Подтверди почту по ссылке из письма, затем войди.';
+        return;
+      }
+      onAuthSuccess(res.data.user);
+    });
+  } else {
+    sb.auth.signInWithPassword({ email: email, password: pass }).then(function(res) {
+      btn.disabled = false; btn.textContent = 'Войти';
+      if (res.error) { errEl.textContent = translateAuthError(res.error.message); return; }
+      onAuthSuccess(res.data.user);
+    });
+  }
+}
+function translateAuthError(msg) {
+  if (/Invalid login/i.test(msg)) return 'Неверная почта или пароль';
+  if (/already registered/i.test(msg)) return 'Эта почта уже зарегистрирована';
+  if (/Email not confirmed/i.test(msg)) return 'Сначала подтверди почту по ссылке из письма';
+  if (/rate limit/i.test(msg)) return 'Слишком много попыток, подожди немного';
+  return msg;
+}
+function onAuthSuccess(user) {
+  currentUser = user;
+  document.getElementById('authModal').classList.remove('visible');
+  showToast('Добро пожаловать! Синхронизирую данные...');
+  // Pull cloud data, then refresh all views
+  pullFromCloud(function() {
+    refreshAllViews();
+    updateAccountUI();
+    showToast('Данные синхронизированы ☁️');
+  });
+}
+function logoutAccount() {
+  if (!cloudEnabled) return;
+  sb.auth.signOut().then(function() {
+    currentUser = null;
+    updateAccountUI();
+    burgerClose();
+    showToast('Вы вышли из аккаунта');
+  });
+}
+function updateAccountUI() {
+  var inEl = document.getElementById('accountLoggedIn');
+  var outEl = document.getElementById('accountLoggedOut');
+  if (currentUser) {
+    var nick = (currentUser.user_metadata && currentUser.user_metadata.nickname) || 'Пользователь';
+    document.getElementById('accountNick').textContent = nick;
+    document.getElementById('accountEmail').textContent = currentUser.email || '';
+    document.getElementById('accountAvatar').textContent = nick.charAt(0).toUpperCase();
+    inEl.style.display = 'block';
+    outEl.style.display = 'none';
+  } else {
+    inEl.style.display = 'none';
+    outEl.style.display = 'block';
+  }
+}
+function refreshAllViews() {
+  updateTimerDisplay();
+  updateSavings();
+  renderBadges();
+  updateStreak();
+  renderMoodSection();
+  renderReasonCard();
+  renderDailyTask();
+  renderBalance();
+  loadDarkTheme();
+}
+function checkExistingSession() {
+  if (!cloudEnabled) return;
+  sb.auth.getSession().then(function(res) {
+    if (res.data && res.data.session && res.data.session.user) {
+      currentUser = res.data.session.user;
+      updateAccountUI();
+      pullFromCloud(function() { refreshAllViews(); });
+    }
+  });
+}
+
 
 // ===== NAV =====
 function showPage(name, el) {
@@ -6142,6 +6403,11 @@ loadReminderState();
 checkLetterDelivery();
 renderDailyTask();
 renderBalance();
+
+// Cloud accounts
+initCloud();
+updateAccountUI();
+checkExistingSession();
 
 // Lock background scroll whenever any modal/overlay is visible
 (function() {
