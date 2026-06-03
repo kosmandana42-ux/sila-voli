@@ -46,10 +46,15 @@
     font-weight: 700;
   }
 
-  html { background: #e8f0fa; }
+  html { background: #c5d9f0; }
 
   body {
-    background: linear-gradient(135deg, #ddeeff 0%, #e8f0fa 40%, #d6e8f7 70%, #e0edf8 100%);
+    background: 
+      radial-gradient(ellipse 60% 50% at 85% 10%, #7ab0e0 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 10% 80%, #5a9fd8 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 70% 60%, #8abce8 0%, transparent 55%),
+      radial-gradient(ellipse 35% 35% at 25% 30%, #90c0e8 0%, transparent 55%),
+      linear-gradient(145deg, #c5d9f0 0%, #d8eaf8 35%, #cce0f5 65%, #d2e6f7 100%);
     background-attachment: fixed;
     color: var(--text);
     font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -281,7 +286,7 @@
   .timer-digits.running {
     color: var(--accent);
     animation: pulse 2s ease-in-out infinite;
-    text-shadow: 0 0 30px rgba(74,127,181,0.3);
+    text-shadow: 0 0 40px rgba(74,127,181,0.4), 0 2px 8px rgba(74,127,181,0.2);
   }
 
   @keyframes pulse {
@@ -362,18 +367,20 @@
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, #4a7fb5 0%, #5aaecc 100%);
+    background: linear-gradient(135deg, #3d72aa 0%, #4a9ab5 100%);
     color: #fff;
-    font-weight: 600;
-    box-shadow: 0 4px 16px rgba(74,127,181,0.35);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    box-shadow: 0 8px 24px rgba(74,127,181,0.45);
     border: none;
+    padding: 16px 28px;
   }
   .btn-primary:hover {
-    background: linear-gradient(135deg, #3d6fa0 0%, #4a9ab5 100%);
+    background: linear-gradient(135deg, #2f62a0 0%, #3d8aa8 100%);
     transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(74,127,181,0.5);
+    box-shadow: 0 16px 40px rgba(74,127,181,0.55);
   }
-
   .btn-primary:active { transform: translateY(-1px); }
 
   .btn-danger {
@@ -2360,6 +2367,111 @@
   .account-email { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .sync-badge { font-family: 'DM Mono', monospace; font-size: 10px; color: #2e7d5e; }
 
+
+  /* ANIMATED BACKGROUND BLOBS */
+  .bg-blobs {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .bg-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.45;
+    animation: blobMove 12s ease-in-out infinite;
+  }
+
+  .bg-blob-1 {
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, #7ab0e0 0%, #4a85c0 100%);
+    top: -120px;
+    right: -100px;
+    animation-duration: 14s;
+    opacity: 0.55;
+  }
+
+  .bg-blob-2 {
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, #5a9fd8 0%, #3a7ab8 100%);
+    bottom: 5%;
+    left: -100px;
+    animation-duration: 18s;
+    animation-delay: -4s;
+    opacity: 0.45;
+  }
+
+  .bg-blob-3 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, #a0c8e8 0%, #6aa0d0 100%);
+    top: 45%;
+    right: 10%;
+    animation-duration: 16s;
+    animation-delay: -8s;
+    opacity: 0.5;
+  }
+
+  .bg-blob-4 {
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, #90bce0 0%, #5a90c8 100%);
+    top: 25%;
+    left: 15%;
+    animation-duration: 20s;
+    animation-delay: -2s;
+    opacity: 0.4;
+  }
+
+  @keyframes blobMove {
+    0%   { transform: translate(0, 0) scale(1); }
+    25%  { transform: translate(30px, -40px) scale(1.05); }
+    50%  { transform: translate(-20px, 30px) scale(0.95); }
+    75%  { transform: translate(40px, 20px) scale(1.08); }
+    100% { transform: translate(0, 0) scale(1); }
+  }
+
+  /* Dark theme blobs */
+  [data-theme="dark"] .bg-blob-1 { background: radial-gradient(circle, #1e4a7a 0%, #0d2a4a 100%); opacity: 0.6; }
+  [data-theme="dark"] .bg-blob-2 { background: radial-gradient(circle, #1a3d6a 0%, #0a2040 100%); opacity: 0.6; }
+  [data-theme="dark"] .bg-blob-3 { background: radial-gradient(circle, #163260 0%, #0d2548 100%); opacity: 0.5; }
+  [data-theme="dark"] .bg-blob-4 { background: radial-gradient(circle, #1c3d72 0%, #0e2850 100%); opacity: 0.5; }
+
+
+  /* GLASS CARDS - blobs visible through */
+  .timer-display,
+  .start-section,
+  .streak-card,
+  .quote-block,
+  .record-item,
+  .badge-item,
+  .savings-section,
+  .timer-actions .btn-danger,
+  .records-section {
+    background: rgba(255,255,255,0.45) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255,255,255,0.7) !important;
+  }
+
+  .addiction-btn {
+    background: rgba(255,255,255,0.4) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255,255,255,0.65) !important;
+  }
+
+  nav {
+    background: rgba(255,255,255,0.5) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.7) !important;
+  }
 </style>
 </head>
 <body style="background: linear-gradient(135deg, #ddeeff 0%, #e8f0fa 40%, #d6e8f7 70%, #e0edf8 100%) fixed !important">
