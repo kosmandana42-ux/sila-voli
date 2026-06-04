@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZP0W6FTK7B"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-ZP0W6FTK7B');
+</script>
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -89,11 +97,6 @@
   }
 
   .nav-tabs { display: none !important; }
-  .nav-tabs_hidden {
-    display: flex;
-    gap: 2px;
-  }
-
   .nav-tab {
     padding: 8px 20px;
     background: none;
@@ -779,47 +782,66 @@
     box-shadow: 0 1px 12px rgba(74,127,181,0.08);
   }
 
-  .savings-input-row {
-    display: flex;
-    gap: 12px;
-    align-items: flex-end;
+  /* BADGES */
+  .next-badge-progress {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
     margin-bottom: 16px;
   }
-
-  .savings-display {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+  .next-badge-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
   }
-
-  .savings-card {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 16px;
-    text-align: center;
-  }
-
-  .savings-card-label {
+  .next-badge-label {
     font-family: 'DM Mono', monospace;
     font-size: 9px;
     letter-spacing: 2px;
-    text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 6px;
+    text-transform: uppercase;
   }
-
-  .savings-card-value {
+  .next-badge-name {
     font-family: 'DM Sans', sans-serif;
-    font-size: 26px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--accent);
-    letter-spacing: -0.5px;
   }
-
-  .savings-card-value.money { color: #82C4A0; }
-
-  /* BADGES */
+  .next-badge-bar-wrap {
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .next-badge-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #4a7fb5, #5aaecc);
+    transition: width 0.6s ease;
+    width: 0%;
+  }
+  .next-badge-footer {
+    display: flex;
+    justify-content: space-between;
+  }
+  .next-badge-done {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .next-badge-left {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  [data-theme="dark"] .next-badge-progress {
+    background: rgba(255,255,255,0.04) !important;
+    border-color: rgba(74,127,181,0.2) !important;
+  }
   .badges-section {
     margin-bottom: 32px;
   }
@@ -927,8 +949,6 @@
 
   @media (max-width: 600px) {
     .badges-grid { grid-template-columns: repeat(3, 1fr); }
-    .savings-input-row { flex-direction: column; }
-    .savings-display { grid-template-columns: 1fr 1fr; }
   }
 
 
@@ -1013,8 +1033,31 @@
   /* DARK THEME */
   [data-theme="dark"] body {
     background: linear-gradient(135deg, #0d1b2a 0%, #0f1923 40%, #0a1520 70%, #111d2a 100%) !important;
+    background-attachment: fixed !important;
   }
-  [data-theme="dark"] .blob { opacity: 0.18; filter: saturate(0.6) brightness(0.6); }
+  [data-theme="dark"] body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.18) 0%, transparent 100%),
+      radial-gradient(1px 1px at 72% 8%, rgba(255,255,255,0.14) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 55%, rgba(255,255,255,0.12) 0%, transparent 100%),
+      radial-gradient(1px 1px at 88% 35%, rgba(255,255,255,0.16) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 80%, rgba(255,255,255,0.10) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 60% 72%, rgba(255,255,255,0.13) 0%, transparent 100%),
+      radial-gradient(1px 1px at 5% 45%, rgba(255,255,255,0.11) 0%, transparent 100%),
+      radial-gradient(1px 1px at 93% 65%, rgba(255,255,255,0.15) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 50% 15%, rgba(255,255,255,0.12) 0%, transparent 100%),
+      radial-gradient(1px 1px at 78% 90%, rgba(255,255,255,0.10) 0%, transparent 100%),
+      radial-gradient(1px 1px at 33% 38%, rgba(255,255,255,0.09) 0%, transparent 100%),
+      radial-gradient(2px 2px at 55% 42%, rgba(180,210,255,0.12) 0%, transparent 100%),
+      radial-gradient(1px 1px at 18% 62%, rgba(255,255,255,0.08) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 82% 18%, rgba(200,220,255,0.10) 0%, transparent 100%);
+  }
+  [data-theme="dark"] .blob { display: none; }
   [data-theme="dark"] nav {
     background: rgba(15,25,35,0.95) !important;
     border-bottom-color: rgba(74,127,181,0.2) !important;
@@ -1035,7 +1078,6 @@
   [data-theme="dark"] .test-question-card,
   [data-theme="dark"] .test-header,
   [data-theme="dark"] .test-result,
-  [data-theme="dark"] .savings-card,
   [data-theme="dark"] .onboarding-overlay,
   [data-theme="dark"] .modal {
     background: rgba(255,255,255,0.05) !important;
@@ -1049,10 +1091,13 @@
   [data-theme="dark"] .record-date,
   [data-theme="dark"] .streak-label,
   [data-theme="dark"] .quote-author,
-  [data-theme="dark"] .savings-card-label,
   [data-theme="dark"] .badge-name,
   [data-theme="dark"] .badge-req {
     color: #5a7a9a !important;
+  }
+
+  [data-theme="dark"] .empty-records {
+    color: #3a5a7a !important;
   }
   [data-theme="dark"] { --text: #e8f0fa; --muted: #5a7a9a; --border: rgba(74,127,181,0.2); --surface: rgba(255,255,255,0.05); --surface2: rgba(255,255,255,0.03); }
 
@@ -1147,17 +1192,6 @@
     line-height: 1.6;
     margin-top: auto;
   }
-
-  /* WAVE */
-  .nav-wave {
-    margin-top: -1px;
-    line-height: 0;
-    position: relative;
-    z-index: 99;
-  }
-  .nav-wave svg { width: 100%; height: 40px; display: block; }
-
-
 
   /* ARC TIMER */
   .timer-arc-wrap {
@@ -1464,9 +1498,6 @@
   .test-select-btn .name { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text); }
   .test-select-btn .desc { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
-  .test-container { display: none; }
-  .test-container.active { display: block; }
-
   .test-header {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -1697,12 +1728,6 @@
   }
 
   /* Savings value */
-  .savings-card-value {
-    font-family: 'DM Sans', sans-serif !important;
-    font-weight: 800 !important;
-    letter-spacing: -1px !important;
-  }
-
   /* Record duration */
   .record-duration {
     font-family: 'DM Sans', sans-serif !important;
@@ -2046,23 +2071,6 @@
   }
   .burger-data-btn:hover { background: rgba(74,127,181,0.06); }
 
-  /* Share card */
-  .share-card-preview {
-    width: 320px;
-    max-width: 100%;
-    margin: 0 auto 20px;
-    border-radius: 24px;
-    padding: 36px 28px;
-    background: linear-gradient(145deg, #4a7fb5, #5aaecc);
-    color: #fff;
-    text-align: center;
-    box-shadow: 0 16px 48px rgba(74,127,181,0.4);
-  }
-  .share-card-emoji { font-size: 56px; margin-bottom: 12px; }
-  .share-card-days { font-family: 'DM Sans', sans-serif; font-size: 52px; font-weight: 800; line-height: 1; letter-spacing: -2px; margin-bottom: 6px; }
-  .share-card-label { font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; opacity: 0.9; margin-bottom: 20px; }
-  .share-card-name { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: 0.85; }
-
   [data-theme="dark"] .sos-tool,
   [data-theme="dark"] .health-item,
   [data-theme="dark"] .mood-face,
@@ -2141,10 +2149,6 @@
   [data-theme="dark"] .insight-action { color: #e8c45a; }
 
   /* Letter to self */
-  .letter-delivery {
-    background: linear-gradient(135deg, #6a5acd, #8a7fd8);
-    color: #fff;
-  }
   .letter-paper {
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -2332,18 +2336,6 @@
   .account-nick { font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 15px; color: var(--text); }
   .account-email { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .sync-badge { font-family: 'DM Mono', monospace; font-size: 10px; color: #2e7d5e; }
-25%  { transform: translate(30px, -40px) scale(1.05); }
-    50%  { transform: translate(-20px, 30px) scale(0.95); }
-    75%  { transform: translate(40px, 20px) scale(1.08); }
-    100% { transform: translate(0, 0) scale(1); }
-  }
-
-  /* Dark theme blobs */
-  [data-theme="dark"] .bg-blob-1 { background: radial-gradient(circle, #1e4a7a 0%, #0d2a4a 100%); opacity: 0.6; }
-  [data-theme="dark"] .bg-blob-2 { background: radial-gradient(circle, #1a3d6a 0%, #0a2040 100%); opacity: 0.6; }
-  [data-theme="dark"] .bg-blob-3 { background: radial-gradient(circle, #163260 0%, #0d2548 100%); opacity: 0.5; }
-  [data-theme="dark"] .bg-blob-4 { background: radial-gradient(circle, #1c3d72 0%, #0e2850 100%); opacity: 0.5; }
-
 
   /* GLASS CARDS - blobs visible through */
   .timer-display,
@@ -2375,39 +2367,43 @@
     border-bottom: 1px solid rgba(255,255,255,0.7) !important;
   }
 
-  /* BLOBS */
-  .blob { position: fixed; border-radius: 50%; z-index: 0; pointer-events: none; }
-  .blob-1 {
-    width: 320px; height: 320px;
-    background: #4a8fd0;
-    opacity: 0.22;
-    top: -80px; right: -80px;
-    filter: blur(60px);
-    -webkit-filter: blur(60px);
-    animation: b1 15s ease-in-out infinite;
+  /* PULSING GLOW on arc */
+  @keyframes arcGlowPulse {
+    0%, 100% { filter: drop-shadow(0 0 3px currentColor) drop-shadow(0 0 6px currentColor); opacity: 0.9; }
+    50%       { filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 18px currentColor); opacity: 1; }
   }
-  .blob-2 {
-    width: 280px; height: 280px;
-    background: #3a7fc8;
-    opacity: 0.2;
-    bottom: 60px; left: -60px;
-    filter: blur(70px);
-    -webkit-filter: blur(70px);
-    animation: b2 19s ease-in-out infinite;
+  #timerArcPath.running {
+    animation: arcGlowPulse 2.5s ease-in-out infinite;
   }
-  .blob-3 {
-    width: 200px; height: 200px;
-    background: #5a9fd8;
-    opacity: 0.18;
-    top: 45%; right: 5%;
-    filter: blur(55px);
-    -webkit-filter: blur(55px);
-    animation: b3 17s ease-in-out infinite;
-  }
-  @keyframes b1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,40px)} }
-  @keyframes b2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,-30px)} }
-  @keyframes b3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-20px,30px)} }
 
+  /* BUTTON MICRO-ANIMATIONS */
+  .btn:active { transform: scale(0.96) !important; transition: transform 0.1s ease !important; }
+  .btn-primary:active { transform: scale(0.96) translateY(-1px) !important; }
+
+  @keyframes btnBounce {
+    0%   { transform: scale(1); }
+    35%  { transform: scale(0.93); }
+    65%  { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  .btn.bounce { animation: btnBounce 0.32s ease forwards; }
+
+  [data-theme="dark"] .timer-actions .btn-danger {
+    background: rgba(180, 40, 40, 0.18) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid rgba(220, 70, 70, 0.5) !important;
+    color: #ff9090 !important;
+  }
+  [data-theme="dark"] .timer-actions .btn-danger:hover {
+    background: rgba(180, 40, 40, 0.30) !important;
+  }
+  [data-theme="dark"] .records-section {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: none !important;
+  }
 </style>
 </head>
 <body style="background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fb 20%, #f3eeff 40%, #eaf6f0 60%, #fdf0f5 80%, #eef4fb 100%) !important; background-attachment: fixed !important;">
@@ -2511,9 +2507,6 @@
 
 </div>
 
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
-<div class="blob blob-3"></div>
 <nav>
   <div class="logo" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 0">
   <svg class="logo-mountain" width="80" height="44" viewBox="0 0 80 44" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2619,9 +2612,13 @@
         <svg class="timer-arc-svg" viewBox="0 0 220 120" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#4a7fb5"/>
-              <stop offset="100%" stop-color="#5aaecc"/>
+              <stop id="arcGradStop1" offset="0%" stop-color="#4a7fb5"/>
+              <stop id="arcGradStop2" offset="100%" stop-color="#5aaecc"/>
             </linearGradient>
+            <filter id="arcGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
           </defs>
           <path d="M 20,115 A 90,90 0 0,1 200,115"
             stroke="rgba(74,127,181,0.12)" stroke-width="10"
@@ -2696,11 +2693,6 @@
       <div class="daily-task-text" id="dailyTaskText"></div>
       <button class="daily-task-btn" id="dailyTaskBtn" onclick="completeDailyTask()">Выполнено ✓</button>
       <div class="daily-task-done" id="dailyTaskDone" style="display:none">✅ Задание выполнено! Молодец.</div>
-    </div>
-
-    <div class="next-goal" id="nextGoalBanner" style="display:none">
-      <div class="next-goal-label">До следующей цели</div>
-      <div class="next-goal-text" id="nextGoalText"></div>
     </div>
 
     <!-- MY REASON CARD -->
@@ -2838,6 +2830,19 @@
     <!-- BADGES -->
     <div class="badges-section">
       <h3>🏆 Достижения</h3>
+      <div class="next-badge-progress" id="nextBadgeProgress">
+        <div class="next-badge-header">
+          <span class="next-badge-label">СЛЕДУЮЩАЯ ЦЕЛЬ</span>
+          <span class="next-badge-name" id="nextBadgeName"></span>
+        </div>
+        <div class="next-badge-bar-wrap">
+          <div class="next-badge-bar-fill" id="nextBadgeBarFill"></div>
+        </div>
+        <div class="next-badge-footer">
+          <span class="next-badge-done" id="nextBadgeDone"></span>
+          <span class="next-badge-left" id="nextBadgeLeft"></span>
+        </div>
+      </div>
       <div class="badges-grid" id="badgesGrid"></div>
     </div>
 
@@ -3566,7 +3571,17 @@ function updateTimerDisplay() {
     if (arcPath) {
       var offset = 283 - arcPct * 283;
       arcPath.style.strokeDashoffset = offset;
-      arcPath.style.filter = arcPct > 0.5 ? 'drop-shadow(0 0 6px rgba(74,127,181,0.7))' : 'none';
+      arcPath.classList.add('running');
+      // Color by milestone
+      var s1 = document.getElementById('arcGradStop1');
+      var s2 = document.getElementById('arcGradStop2');
+      if (s1 && s2) {
+        if (daysPassed2 < 1)       { s1.setAttribute('stop-color','#8a9ab5'); s2.setAttribute('stop-color','#9abecc'); }
+        else if (daysPassed2 < 7)  { s1.setAttribute('stop-color','#4a7fb5'); s2.setAttribute('stop-color','#5aaecc'); }
+        else if (daysPassed2 < 30) { s1.setAttribute('stop-color','#3a9aa0'); s2.setAttribute('stop-color','#4acca8'); }
+        else if (daysPassed2 < 180){ s1.setAttribute('stop-color','#7a5fb5'); s2.setAttribute('stop-color','#9a7fd8'); }
+        else                       { s1.setAttribute('stop-color','#c8a020'); s2.setAttribute('stop-color','#e8c840'); }
+      }
     }
     subEl.textContent = `С ${new Date(startTs).toLocaleDateString('ru', {day:'numeric',month:'long',year:'numeric'})}`;
   }
@@ -4686,11 +4701,46 @@ var BADGES = [
 
 var prevUnlocked = {};
 
+function renderNextBadge(daysPassed) {
+  var wrap = document.getElementById('nextBadgeProgress');
+  var next = BADGES.find(function(b) { return daysPassed < b.hours; });
+  if (!next) {
+    if (wrap) wrap.style.display = 'none';
+    return;
+  }
+  if (wrap) wrap.style.display = 'block';
+  var prev = BADGES[BADGES.indexOf(next) - 1];
+  var fromDays = prev ? prev.hours : 0;
+  var toDays = next.hours;
+  var progress = Math.min(((daysPassed - fromDays) / (toDays - fromDays)) * 100, 100);
+  var daysLeft = toDays - daysPassed;
+
+  var nameEl = document.getElementById('nextBadgeName');
+  var fillEl = document.getElementById('nextBadgeBarFill');
+  var doneEl = document.getElementById('nextBadgeDone');
+  var leftEl = document.getElementById('nextBadgeLeft');
+
+  if (nameEl) nameEl.textContent = next.emoji + ' ' + next.name;
+  if (fillEl) fillEl.style.width = progress.toFixed(1) + '%';
+  if (doneEl) doneEl.textContent = progress.toFixed(0) + '%';
+  if (leftEl) {
+    if (daysLeft < 1) {
+      var hoursLeft = Math.ceil(daysLeft * 24);
+      leftEl.textContent = 'осталось ' + hoursLeft + ' ' + plural(hoursLeft, 'час', 'часа', 'часов');
+    } else {
+      var d = Math.ceil(daysLeft);
+      leftEl.textContent = 'осталось ' + d + ' ' + plural(d, 'день', 'дня', 'дней');
+    }
+  }
+}
+
 function renderBadges() {
   var data = loadData();
   var startTs = data.timers[currentAddiction.key];
   var grid = document.getElementById('badgesGrid');
   var daysPassed = startTs ? (Date.now() - startTs) / 86400000 : 0;
+
+  renderNextBadge(daysPassed);
 
   grid.innerHTML = BADGES.map(function(b) {
     var unlocked = daysPassed >= b.hours;
@@ -5427,6 +5477,8 @@ function completeDailyTask() {
   localStorage.setItem('silavoli_task_done', String(getDayNumber()));
   renderDailyTask();
   showToast('Отличная работа! 🎉');
+  var btn = document.querySelector('[onclick="completeDailyTask()"]');
+  if (btn) { btn.classList.remove('bounce'); void btn.offsetWidth; btn.classList.add('bounce'); }
 }
 
 // ==================================================
@@ -6024,6 +6076,8 @@ function saveMood() {
   data.moods[getMoodKey()] = { mood: selectedMood, triggers: triggers, ts: Date.now() };
   saveData(data);
   showToast('Чек-ин сохранён 💙');
+  var btn = document.querySelector('[onclick="saveMood()"]');
+  if (btn) { btn.classList.remove('bounce'); void btn.offsetWidth; btn.classList.add('bounce'); }
   renderMoodSection();
   renderPrediction();
 }
@@ -6247,7 +6301,6 @@ renderBadges = function() {
 var origUpdateTimerDisplay = updateTimerDisplay;
 updateTimerDisplay = function() {
   origUpdateTimerDisplay();
-  updateNextGoal();
   renderHealth();
   renderGoal();
   renderPrediction();
